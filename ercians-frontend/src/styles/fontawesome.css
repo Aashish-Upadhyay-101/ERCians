@@ -1,0 +1,58 @@
+.fa {
+  font-family: FontAwesome;
+  font-style: none;
+}
+
+.fa-home::before {
+  content: "\f015";
+}
+
+.fa-message::before {
+  content: "\f4ad";
+}
+
+.fa-profile::before {
+  content: "\f007";
+}
+
+.fa-saved::before {
+  content: "\f02e";
+}
+
+.fa-settings::before {
+  content: "\f013";
+}
+
+.fa-live::before {
+  content: "\f03d";
+  color: red;
+}
+
+.fa-feeling::before {
+  content: "\f4da";
+  color: rgba(161, 127, 4, 0.562);
+}
+
+.fa-photo-video::before {
+  content: "\f87c";
+  color: green;
+}
+
+.fa-more::before {
+  content: "\f142";
+}
+
+.fa-like::before {
+  font-family: Font Awesome 6 Pro;
+  font-weight: 300;
+  content: "\f004";
+  fill: red;
+}
+
+.fa-comment::before {
+  content: "\f075";
+}
+
+.fa-share::before {
+  content: "\f1d8";
+}

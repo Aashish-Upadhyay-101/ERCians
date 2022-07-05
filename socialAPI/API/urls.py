@@ -21,8 +21,15 @@ urlpatterns = [
     path('comment/<int:pk>/like/', views.CommentAddLikeAPIView.as_view(), name="like-comment"),
     path('post/<int:post_pk>/comment/<int:comment_pk>/reply-comment/', views.CommentReplyAPIView.as_view(), name="reply-comment"),
     path('post/<int:post_pk>/comment/<int:comment_pk>/all-sub-comments/', views.CommentReplyAllListAPIView.as_view(), name="all-sub-comment"),
+    path('forgot-password/', views.PasswordResetEmailAPIView.as_view(), name="forget-password"),
+    path('auth/reset-password/<str:uid>/<str:token>/', views.ResetPasswordTokenValidatorAPIView.as_view(), name="reset-token-validator"),
+    path('reset-password/set-new-password/', views.SetNewPasswordAPIView.as_view(), name="set-new-password"),
 ]
 
-'''
-last ko endpoint banauna baki xa function esko
-'''
+
+# {
+# "uid": "MjM",
+# "token": "b82jr2-60204a9dc38a9e3b6cc6c0309edf714e",
+# "password": "12345678",
+# "confirm_password": "12345678"
+# }

@@ -1,0 +1,67 @@
+.right-sidebar {
+  margin-top: 4.8rem;
+  border-radius: 12px;
+  background-color: #fff;
+  padding: 2.4rem;
+  height: 100vh;
+  overflow-y: scroll;
+  position: fixed;
+  right: 24px;
+}
+
+.right-sidebar__header {
+  display: flex;
+  gap: 2.4rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.right-sidebar__header > p {
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.right-sidebar__header__right {
+  display: flex;
+  align-items: center;
+}
+
+.right-sidebar__header__right > input {
+  border: none;
+  outline: none;
+  width: 15rem;
+  padding: 1.2rem;
+  font-size: 1.6rem;
+  border-radius: 12px 0 0 12px;
+  background-color: rgba(153, 153, 153, 0.077);
+}
+
+.right-sidebar__header__right > ion-icon {
+  font-size: 1.8rem;
+  background-color: rgba(153, 153, 153, 0.077);
+  padding: 1.2rem;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  cursor: pointer;
+}
+
+.right-sidebar__contacts {
+  margin-top: 3.2rem;
+}
+
+.right-sidebar__contacts__person {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  margin-bottom: 1.4rem;
+}
+
+.right-sidebar__contacts__person > img {
+  height: 40px;
+  width: 40px;
+  border-radius: 100px;
+}
+
+.right-sidebar__contacts__person > p {
+  font-size: 1.5rem;
+}

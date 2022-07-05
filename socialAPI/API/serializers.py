@@ -1,5 +1,8 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import smart_str
 from rest_framework import serializers
 from .models import Post, UserProfile, Comment
 
@@ -81,25 +84,8 @@ class PostSerializer(serializers.ModelSerializer):
             comment_dict['comment'] = comment.comment
             comment_dict['likes'] = len(comment.likes.all())
             comment_dict['created_on'] = comment.created_on
-            # comment_dict['is_sub_comment'] = comment.is_sub_comment
-            # comment_dict['sub_comment'] = comment.sub_comment.sub_comment
-
-
-            # add sub_comment in the comment json response
-            # sub_comments = comment.all_sub_comments()
-            # sub_comment_list = []
-            # for sub_comment in sub_comments:
-            #     sub_comment_dict={}
-            #     sub_comment_dict['id'] = sub_comment.id
-            #     sub_comment_dict['auther'] = sub_comment.user.username
-            #     sub_comment_dict['profile_picture'] = sub_comment.user.profile.profile_picture.url
-            #     sub_comment_dict['created_on'] = sub_comment.created_on
-            #     sub_comment_dict['likes'] = len(sub_comment.likes.all())
-            #     sub_comment_list.append(sub_comment_dict)
-            #     del sub_comment_dict
-
+            
             comment_list.append(comment_dict)
-            # comment_list.append(sub_comment_list)
             del comment_dict
         return comment_list
 
@@ -122,6 +108,47 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'post', 'comment', 'sub_comment', 'likes', 'created_on']
 
 
+class PasswordResetSerailizer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    class Meta:
+        fields = ['email']
 
 
+# new password serializer
+class SetNewPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(min_length=8, style={'input_type': 'password'}, write_only=True)
+    confirm_password = serializers.CharField(min_length=8, style={'input_type': 'password'}, write_only=True)
+    uid = serializers.CharField(write_only=True)
+    token = serializers.CharField(write_only=True)
+
+    class Meta:
+        fields = ['uid', 'token', 'password', 'confirm_password']
+
+         
+    def validate(self, validated_data):
+        password = validated_data.get('password')
+        confirm_password = validated_data.get('confirm_password')
+        uid = validated_data.get('uid')
+        token = validated_data.get('token')
+
+        if uid is None or token is None:
+            raise serializers.ValidationError("Uid and token missing")
+
+        if not password == confirm_password:
+            raise serializers.ValidationError("Comfirm password didn't match")
+        
+        user_id = smart_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(pk=user_id)
+        if user is None:
+            raise serializers.ValidationError("User is not found")
+        
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            raise serializers.ValidationError("Token is invalid, please request another token")
+
+        # update password
+        user.set_password(password)
+        user.save()
+    
+        return super().validate(validated_data) 
 

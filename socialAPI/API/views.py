@@ -1,11 +1,20 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import smart_str
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.conf import settings 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.decorators import permission_classes
-from .serializers import LoginUserSerializer, RegisterUserSerializer, PostSerializer, UserProfileSerializer, CommentSerializer
+from .serializers import (
+    LoginUserSerializer, RegisterUserSerializer, PostSerializer, UserProfileSerializer, 
+    CommentSerializer, PasswordResetSerailizer, SetNewPasswordSerializer,
+    )
 from .models import Post, UserProfile, Comment
 from .permissions import IsPostOwner, IsOriginalUser, IsCommentOwner
 
@@ -242,13 +251,64 @@ class CommentReplyAllListAPIView(APIView):
         '''
         display all the sub-comment of that comment_pk (logic goes here)
         '''
-        all_sub_comment = comment.all_sub_comments()
+        all_sub_comment = comment.all_sub_comments
         serializer = CommentSerializer(all_sub_comment, many=True)
         return Response({"data": serializer.data})
 
+
+class PasswordResetEmailAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email', '')
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            user_id_in_byte = str(user.id).encode()
+            uid = urlsafe_base64_encode(user_id_in_byte)
+            token = PasswordResetTokenGenerator().make_token(user)
+            password_reset_url = f'http://127.0.0.1:8000/api/auth/reset-password/{uid}/{token}/'
+            
+            # email 
+            subject = 'Password Reset For ERCians'
+            email_body = f'Hello, \nuse this link to reset your password.\n{password_reset_url}'
+            to = [email]
+            email_from = settings.EMAIL_HOST_USER
+            
+            try:
+                send_mail(subject, email_body, email_from, to)
+                return Response({"message": "email sent successfully"})
+
+            except Exception as e:
+                print(e)
+                
+        return Response({"message": "There was problem sending email please try again."})
+
+
+class ResetPasswordTokenValidatorAPIView(APIView):
+    def get(self, request, uid, token, *args, **kwargs):
+        try:
+            user_id = smart_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=user_id)
+            if user is None:
+                return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response({"message": "Token is invalid, please request another one"}, status=status.HTTP_401_UNAUTHORIZED)
+            
+            return Response({"message": "Credentials Valid", "uid": uid, "token": token}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"message": "Token is invalid, please request another one"}, status=status.HTTP_401_UNAUTHORIZED) 
+
+
+class SetNewPasswordAPIView(APIView):    
+    def patch(self, request, *args, **kwargs):
+        serializer = SetNewPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"message": "password reset successfully"}, status=status.HTTP_200_OK)
+
+     
+
 """
-comment reply and comment like (display user's info who liked the post -> optional)
-check sub_comment delele end point
+Notification, Messaging, Video call, special chating room, payment features
 API endpoint testing all results
 """
 
