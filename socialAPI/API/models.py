@@ -17,6 +17,7 @@ class UserProfile(models.Model):
     birthday = models.DateField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     slug = models.SlugField(max_length=100, blank=True, null=True)
+    # is_activated = models.BooleanField(default=False) # this field is newly added
 
     def get_followers(self):
         followers = self.followers.all()

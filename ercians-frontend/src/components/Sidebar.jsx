@@ -39,6 +39,11 @@ const Sidebar = () => {
               <ion-icon name="cog"></ion-icon>Settings
             </a>
           </li>
+          <li className="side__navigation__nav__items">
+            <a href="#" className="side__navigation__nav__link">
+              <ion-icon name="log-out-outline"></ion-icon>Logout
+            </a>
+          </li>
         </ul>
       </div>
     </aside>
