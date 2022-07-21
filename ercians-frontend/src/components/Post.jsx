@@ -24,6 +24,19 @@ const Post = ({
   const date = new Date(created_on);
   const created_time = timeAgo.format(date.getTime());
 
+  // const handlePostLoad = () => {
+  //   console.log(user.id);
+  //   for (let i = 0; i < likes.length; i++) {
+  //     if (likes[i].id == user.id) {
+  //       setLike(true);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handlePostLoad();
+  // }, []);
+
   return (
     <div className="post">
       <div className="post__header">
