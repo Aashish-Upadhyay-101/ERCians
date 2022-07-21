@@ -5,12 +5,16 @@ from django.utils.encoding import smart_str
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.conf import settings 
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, authentication_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.parsers import FileUploadParser
 from .serializers import (
     LoginUserSerializer, RegisterUserSerializer, PostSerializer, UserProfileSerializer, 
     CommentSerializer, PasswordResetSerailizer, SetNewPasswordSerializer,
@@ -33,6 +37,7 @@ class RegisterUserAPIView(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# created a login token that is passed on the Response
 class LoginUserAPIView(APIView):
     serializer_class = LoginUserSerializer
 
@@ -44,9 +49,11 @@ class LoginUserAPIView(APIView):
             user = serializer.validated_data['user']
             login(request, user)
 
-            return Response({"message": "user logged in successfully"}, status=status.HTTP_200_OK)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"message": "user logged in successfully", "token": token.key, "user": user.id}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors)
+
 
 @permission_classes([IsAuthenticated])
 class LogoutAPIView(APIView):
@@ -55,10 +62,16 @@ class LogoutAPIView(APIView):
         return Response({"message": "user logged out successfull"}, status=status.HTTP_200_OK)
 
 
+
 class PostListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Post.objects.all().order_by('-created_on') 
+    # queryset = Post.objects.all().order_by('-created_on') 
     serializer_class = PostSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Post.objects.all().order_by('-created_on')
+    
     
     def perform_create(self, serializer):
         serializer.save(auther=self.request.user)
@@ -107,6 +120,8 @@ class UserProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 
 
 class GetOwnProfileAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             user = request.user.profile

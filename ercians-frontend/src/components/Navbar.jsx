@@ -1,7 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 
 const Navbar = () => {
+  const user_token = useSelector((state) => state.user.token);
+
   return (
     <nav className="navbar">
       <div></div>
@@ -16,13 +20,17 @@ const Navbar = () => {
             <ion-icon name="chatbubbles-outline"></ion-icon>
           </a>
         </li>
-        <li className="navbar-item">
-          <a href="" className="navbar-link">
-            <p>
-              <ion-icon name="bowling-ball-outline"></ion-icon>Login
-            </p>
-          </a>
-        </li>
+        {user_token === "" ? (
+          <li className="navbar-item">
+            <Link to="/login" className="navbar-link">
+              <p>
+                <ion-icon name="bowling-ball-outline"></ion-icon>Login
+              </p>
+            </Link>
+          </li>
+        ) : (
+          ""
+        )}
       </ul>
     </nav>
   );

@@ -1,9 +1,20 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { logout } from "../store/userSlice";
 import ERCiansLogo from "../assets/images/ERCians-logo.png";
 import "../styles/Sidebar.css";
 import "../styles/fontawesome.css";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   return (
     <aside className="aside">
       <img className="logo" src={ERCiansLogo} alt="logo" />
@@ -39,10 +50,10 @@ const Sidebar = () => {
               <ion-icon name="cog"></ion-icon>Settings
             </a>
           </li>
-          <li className="side__navigation__nav__items">
-            <a href="#" className="side__navigation__nav__link">
+          <li className="side__navigation__nav__items" onClick={handleLogout}>
+            <Link to="/" className="side__navigation__nav__link">
               <ion-icon name="log-out-outline"></ion-icon>Logout
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

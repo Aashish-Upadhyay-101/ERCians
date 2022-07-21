@@ -26,10 +26,3 @@ urlpatterns = [
     path('reset-password/set-new-password/', views.SetNewPasswordAPIView.as_view(), name="set-new-password"),
 ]
 
-
-# {
-# "uid": "MjM",
-# "token": "b82jr2-60204a9dc38a9e3b6cc6c0309edf714e",
-# "password": "12345678",
-# "confirm_password": "12345678"
-# }

@@ -16,6 +16,10 @@
   gap: 1.2rem;
 }
 
+.post__profile__picture {
+  object-fit: cover;
+}
+
 .post__header__right__name__time {
   display: flex;
   flex-direction: column;
@@ -49,10 +53,21 @@
 
 .post__reactions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 1.2rem 2rem;
   font-size: 2.4rem;
+}
+
+.post__reactions > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 2.4rem;
+}
+
+.reaction__message {
+  font-size: 1.4rem;
+  margin-top: 1.2rem;
 }
 
 .post__reactions__left {
@@ -63,4 +78,28 @@
 
 #post__reactions__icon {
   font-size: 2.8rem;
+  /* animation: liked 0.5s backwards; */
+}
+
+#liked {
+  font-size: 2.8rem;
+  color: red;
+  animation: liked 0.5s forwards;
+}
+
+@keyframes liked {
+  0% {
+    /* transform: scale(0); */
+  }
+  40% {
+    transform: scale(1.5);
+  }
+
+  80% {
+    transform: scale(0.7);
+  }
+
+  100% {
+    /* transform: scale(0); */
+  }
 }

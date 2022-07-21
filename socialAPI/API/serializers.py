@@ -1,3 +1,4 @@
+from dataclasses import fields
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
@@ -41,6 +42,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class LoginUserSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(min_length=8, style={'input_type': 'password'}, write_only=True)
+
+    class Meta:
+        fields = ['email', 'password']
 
     def validate(self, validated_data):
         email = validated_data['email']

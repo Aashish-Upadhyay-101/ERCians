@@ -18,6 +18,7 @@
   height: 50px;
   width: 50px;
   border-radius: 12px;
+  object-fit: cover;
 }
 
 .upload__post__top > input {

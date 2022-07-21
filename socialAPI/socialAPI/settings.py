@@ -42,7 +42,9 @@ INSTALLED_APPS = [
 
     #apps
     'rest_framework',
+    'rest_framework.authtoken',
     'API',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +55,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+REST_FRAMEWORK = {    
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
 
 ROOT_URLCONF = 'socialAPI.urls'
 
@@ -140,3 +152,24 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'aashish.upadhyay98651@gmail.com'
 EMAIL_HOST_PASSWORD = 'aswbthxrrljxadly'
 
+
+CSRF_TRUSTED_ORIGINS = ['chrome-extension://aicmkgpgakddgnaphhhpliifpcfhicfo']
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "Authorization",
+    "x-csrftoken",
+    "x-requested-with",
+]

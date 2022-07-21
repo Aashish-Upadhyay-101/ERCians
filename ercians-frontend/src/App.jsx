@@ -1,32 +1,36 @@
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import Cookies from "universal-cookie";
 import "./styles/App.css";
-import Sidebar from "./components/Sidebar";
-import Feed from "./components/Feed";
-import RightSidebar from "./components/RightSidebar";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { setDefaultLoginUser } from "./store/userSlice";
 
 function App() {
+  const dispatch = useDispatch();
+  const cookies = new Cookies();
+
+  const token = cookies.get("auth_token");
+  useEffect(() => {
+    dispatch(setDefaultLoginUser(token));
+  }, []);
+
   return (
     <div className="App">
-      <Navbar />
-      <div className="app">
-        <Sidebar />
-        <Feed />
-        <RightSidebar />
-      </div>
-
-      {/* <Signup /> */}
-      {/* <Login /> */}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
 
 export default App;
 
-{
-  /* <ion-icon name="notifications-outline"></ion-icon> */
-}
-{
-  /* <ion-icon name="chatbubbles-outline"></ion-icon> */
-}
+// user login done !
+// register user

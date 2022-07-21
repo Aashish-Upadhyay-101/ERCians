@@ -10,7 +10,7 @@ from django.utils.text import slugify
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name='user')
     name = models.CharField(max_length=50, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures', default='profile_picture/default_profile_picture.jpeg', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures', default='profile_pictures/default_profile_picture.jpeg', blank=True, null=True)
     followers = models.ManyToManyField(User, blank=True, related_name='+') 
     followings = models.ManyToManyField(User, blank=True, related_name='+')
     bio = models.TextField(max_length=256, blank=True, null=True)
@@ -67,7 +67,8 @@ class Post(models.Model):
         curr_user = vars(self.auther)
         return {
             "id": curr_user.get("id"),
-            "username": curr_user.get("username")
+            "username": curr_user.get("username"),
+            "profile_picture": self.auther.profile.profile_picture.url,
         }
     
     def get_liked_user(self):
@@ -75,6 +76,7 @@ class Post(models.Model):
         likes_list = []
         for like in likes:
             likes_dict = {}
+            likes_dict['id'] = like.profile.id 
             likes_dict['name'] = like.username
             likes_dict['profile_picture'] = like.profile.profile_picture.url 
             likes_list.append(likes_dict)
