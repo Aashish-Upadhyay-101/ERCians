@@ -78,13 +78,19 @@
 
 #post__reactions__icon {
   font-size: 2.8rem;
-  /* animation: liked 0.5s backwards; */
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#post__reactions__icon:hover {
+  color: #a875fd;
 }
 
 #liked {
   font-size: 2.8rem;
   color: red;
   animation: liked 0.5s forwards;
+  cursor: pointer;
 }
 
 @keyframes liked {
@@ -102,4 +108,25 @@
   100% {
     /* transform: scale(0); */
   }
+}
+
+.comment-bubble {
+  position: relative;
+  cursor: pointer;
+}
+
+.comment-bubble > span {
+  height: 15px;
+  width: 15px;
+  text-align: center;
+  vertical-align: middle;
+  position: absolute;
+  font-size: 1rem;
+  border-radius: 100px;
+  background-color: #a875fd;
+  padding: 2px;
+  color: white;
+  font-weight: 700;
+  top: -1px;
+  right: -2px;
 }

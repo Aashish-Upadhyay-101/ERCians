@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchAllPosts } from "../store/postSlice";
 import Navbar from "../components/Navbar";
 import RightSidebar from "../components/RightSidebar";
 import Sidebar from "../components/Sidebar";

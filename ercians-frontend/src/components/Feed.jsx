@@ -22,6 +22,7 @@ const Feed = () => {
     }
   });
 
+  // might use this for comment fetch as well
   useEffect(() => {
     dispatch(fetchAllPosts());
   }, [modalClick]);
@@ -58,15 +59,17 @@ const Feed = () => {
       )}
       {modalClick && <PostModal setModalClick={setModalClick} />}
 
-      {posts.map((post) => (
+      {posts.map((post, index) => (
         <Post
-          key={post.id}
+          key={index}
+          id={post.id}
           auther={post.auther.username}
           auther_profile_picture={post.auther.profile_picture}
           description={post.description}
           image={post.image}
           created_on={post.created_on}
           likes={post.likes}
+          comments={post.comments}
         />
       ))}
     </div>

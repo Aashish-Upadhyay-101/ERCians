@@ -1,41 +1,60 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import TimeAgo from "javascript-time-ago";
 import "../styles/Post.css";
-
+import Cookies from "universal-cookie";
 import en from "javascript-time-ago/locale/en";
 import { useState } from "react";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { fetchAllPosts } from "../store/postSlice";
+import CommentModal from "./CommentModal";
 
 TimeAgo.addDefaultLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
+const cookies = new Cookies();
+
 const Post = ({
+  id,
   auther,
   image,
   description,
   auther_profile_picture,
   created_on,
   likes,
+  comments,
 }) => {
+  // const postRef = useRef();
+  const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const user = useSelector((state) => state.user.loggedInUser.data);
   const date = new Date(created_on);
   const created_time = timeAgo.format(date.getTime());
 
-  // const handlePostLoad = () => {
-  //   console.log(user.id);
-  //   for (let i = 0; i < likes.length; i++) {
-  //     if (likes[i].id == user.id) {
-  //       setLike(true);
-  //     }
-  //   }
-  // };
+  const [commentModalClick, setCommentModalClick] = useState(false);
 
-  // useEffect(() => {
-  //   handlePostLoad();
-  // }, []);
+  // default like in the third post why this is happening?? I think it must be in dispatch function
+  useEffect(() => {
+    for (let i = 0; i < likes.length; i++) {
+      if (likes[i].id === user.id) {
+        setLike(true);
+      }
+    }
+  }, [user]);
+
+  const handleLike = async () => {
+    setLike(!like);
+
+    const response = await axios({
+      method: "get",
+      url: `http://127.0.0.1:8000/api/post/${id}/like/`,
+      headers: {
+        Authorization: `Token ${cookies.get("auth_token")}`,
+      },
+    });
+    dispatch(fetchAllPosts());
+  };
 
   return (
     <div className="post">
@@ -65,20 +84,25 @@ const Post = ({
               <ion-icon
                 id="liked"
                 name="heart"
-                onClick={() => setLike(!like)}
+                onClick={() => handleLike()}
               ></ion-icon>
             ) : (
               <ion-icon
                 id="post__reactions__icon"
                 name="heart-outline"
-                onClick={() => setLike(!like)}
+                onClick={() => handleLike()}
               ></ion-icon>
             )}
-
-            <ion-icon
-              id="post__reactions__icon"
-              name="chatbubble-outline"
-            ></ion-icon>
+            <div
+              className="comment-bubble"
+              onClick={() => setCommentModalClick(true)}
+            >
+              <ion-icon
+                id="post__reactions__icon"
+                name="chatbubble-outline"
+              ></ion-icon>
+              <span>{comments.length}</span>
+            </div>
             <ion-icon
               id="post__reactions__icon"
               name="paper-plane-outline"
@@ -95,6 +119,9 @@ const Post = ({
       </div>
 
       {/* display comments section here  */}
+      {commentModalClick && (
+        <CommentModal setCommentModalClick={setCommentModalClick} />
+      )}
     </div>
   );
 };

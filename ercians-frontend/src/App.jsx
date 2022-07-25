@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { setDefaultLoginUser } from "./store/userSlice";
+import { fetchAllPosts } from "./store/postSlice";
 
 function App() {
   const dispatch = useDispatch();

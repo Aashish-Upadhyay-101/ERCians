@@ -123,3 +123,6 @@ class Comment(models.Model):
             likes_list.append(likes_dict)
             del likes_dict
         return likes_list
+
+
+# Notification, messaging and all other models goes here after few days

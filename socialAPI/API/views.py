@@ -85,6 +85,9 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class AddLikeAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, pk, *args, **kwargs):
         try:
             post = Post.objects.get(pk=pk)
