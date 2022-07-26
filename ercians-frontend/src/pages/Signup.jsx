@@ -31,7 +31,6 @@ const Signup = () => {
   return (
     <section className="section-signup">
       <div className="signup">
-        ;nmb m
         <Link to="/">
           <img className="logo" src={Logo} alt="Logo" />
         </Link>
