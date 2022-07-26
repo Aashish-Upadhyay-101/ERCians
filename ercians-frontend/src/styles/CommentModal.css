@@ -28,7 +28,6 @@
   background-color: #fff;
   width: 80vw;
   height: 90vh;
-  /* padding: 1.8rem; */
   border-radius: 12px;
   overflow: hidden;
   display: flex;
@@ -39,10 +38,16 @@
   padding: 1.8rem;
 }
 
+.image-div {
+  position: relative;
+}
+
 .comment-modal-image {
   height: 100%;
-  width: 50%;
-  object-fit: cover;
+  width: 100%;
+  object-fit: contain;
+  image-rendering: optimizeQuality;
+  object-position: 1.8rem;
 }
 
 .modal-right-heading {

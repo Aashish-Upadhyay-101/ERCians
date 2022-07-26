@@ -120,7 +120,13 @@ const Post = ({
 
       {/* display comments section here  */}
       {commentModalClick && (
-        <CommentModal setCommentModalClick={setCommentModalClick} />
+        <CommentModal
+          comments={comments}
+          auther={auther}
+          auther_profile_picture={auther_profile_picture}
+          image={image}
+          setCommentModalClick={setCommentModalClick}
+        />
       )}
     </div>
   );

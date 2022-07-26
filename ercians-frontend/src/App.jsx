@@ -33,5 +33,7 @@ function App() {
 
 export default App;
 
-// user login done !
-// register user
+// comment showing feature done !!! ( reply of the comment is left to show but I will handle it later )
+/* before adding any new features first of all I would like to do error handling in the
+front end 
+ */

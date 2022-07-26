@@ -32,6 +32,7 @@ const PostModal = ({ setModalClick }) => {
     });
 
     setModalClick(false);
+    window.location.reload(); // manual fix to a small bug
   };
 
   return (
