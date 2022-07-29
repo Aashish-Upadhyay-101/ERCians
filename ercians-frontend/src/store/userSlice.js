@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
 export const STATUS = Object.freeze({
   IDLE: "idle",
@@ -41,7 +42,6 @@ const userLogin = createAsyncThunk(
       },
     });
     const token = response.data.token;
-
     const user = await getUser(token);
     return {
       user,

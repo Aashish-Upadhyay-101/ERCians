@@ -53,6 +53,7 @@ class LoginUserAPIView(APIView):
             return Response({"message": "user logged in successfully", "token": token.key, "user": user.id}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors)
+        # return Response("Invalid username or password")
 
 
 @permission_classes([IsAuthenticated])

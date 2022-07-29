@@ -46,12 +46,32 @@ const CommentModal = ({
   auther_profile_picture,
   comments,
   image,
+  description,
 }) => {
   return (
     <div className="comment-modal" onClick={() => setCommentModalClick(false)}>
       <span className="Close">X</span>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        {/* <div className="comment-modal-image"></div> */}
+        {!image && (
+          <div className="comment-modal-image">
+            <p
+              style={{
+                width: "100%",
+                height: "100%",
+                fontSize: "2rem",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "purple",
+                color: "#fff",
+                fontWeight: "500",
+              }}
+            >
+              {description}
+            </p>
+          </div>
+        )}
+
         <div className="iamge-div">
           <img className="comment-modal-image" src={image} />
         </div>
@@ -64,21 +84,31 @@ const CommentModal = ({
             <p className="modal-right-heading-name">{auther}</p>
           </div>
 
-          <div className="comment-modal-comments">
-            {comments.map((comment, index) => {
-              return (
-                <Comment
-                  key={index}
-                  id={comment.id}
-                  auther={comment.auther}
-                  profile_picture={comment.profile_picture}
-                  comment={comment.comment}
-                  created_on={comment.created_on}
-                  likes={comment.likes}
-                />
-              );
-            })}
-          </div>
+          {comments.length > 0 ? (
+            <div className="comment-modal-comments">
+              {comments.map((comment, index) => {
+                return (
+                  <Comment
+                    key={index}
+                    id={comment.id}
+                    auther={comment.auther}
+                    profile_picture={comment.profile_picture}
+                    comment={comment.comment}
+                    created_on={comment.created_on}
+                    likes={comment.likes}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <div className="comment-modal-comments">
+              <div className="comment">
+                <p style={{ verticalAlign: "middle", fontSize: "2rem" }}>
+                  No comments yet...
+                </p>
+              </div>
+            </div>
+          )}
           {/* post a comment here  */}
           <div className="post-comment">
             <input type="text" placeholder="write a comment..." autoFocus />

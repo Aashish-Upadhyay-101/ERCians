@@ -125,6 +125,7 @@ const Post = ({
           auther={auther}
           auther_profile_picture={auther_profile_picture}
           image={image}
+          description={description}
           setCommentModalClick={setCommentModalClick}
         />
       )}

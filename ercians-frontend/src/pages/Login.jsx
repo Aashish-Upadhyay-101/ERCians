@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { userLogin, getUser } from "../store/userSlice";
 import "../styles/Login.css";
 import Logo from "../assets/images/ERCians-logo.png";
+import Error from "../components/Error";
+import { STATUS } from "../store/userSlice";
 
 const Login = () => {
+  const userStatus = useSelector((state) => state.user.status);
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
