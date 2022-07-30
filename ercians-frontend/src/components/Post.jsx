@@ -9,7 +9,7 @@ import axios from "axios";
 import { fetchAllPosts } from "../store/postSlice";
 import CommentModal from "./CommentModal";
 
-TimeAgo.addDefaultLocale(en);
+// TimeAgo.addDefaultLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
@@ -121,6 +121,7 @@ const Post = ({
       {/* display comments section here  */}
       {commentModalClick && (
         <CommentModal
+          post_pk={id}
           comments={comments}
           auther={auther}
           auther_profile_picture={auther_profile_picture}

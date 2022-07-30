@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import "../styles/CommentModal.css";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { fetchAllPosts } from "../store/postSlice";
+import { useEffect } from "react";
+import Cookies from "universal-cookie";
 
 TimeAgo.addDefaultLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
+const cookies = new Cookies();
+
+// comment ma  reply,
+// post ma photo haru halna milni system
+// profile visit and profile picture update update
 
 const Comment = ({
   id,
@@ -17,25 +27,55 @@ const Comment = ({
 }) => {
   const date = new Date(created_on);
   const created_time = timeAgo.format(date.getTime(), "mini");
+  const dispatch = useDispatch();
+  const [isCommentLiked, setIsCommentLiked] = useState(false);
+  const [isReplyComment, setIsReplyComment] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchAllPosts());
+  }, [comment, isCommentLiked]);
+
+  const handleLike = async () => {
+    try {
+      const token = cookies.get("auth_token");
+      const response = await axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/comment/${id}/like/`,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      setIsCommentLiked(!isCommentLiked);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   return (
-    <div className="comment">
-      <img
-        className="modal-right-heading-image"
-        src={`http://127.0.0.1:8000` + profile_picture}
-      />
+    <div className="super-comment">
+      <div className="comment">
+        <img
+          className="modal-right-heading-image"
+          src={`http://127.0.0.1:8000` + profile_picture}
+        />
 
-      <div className="comment-right">
-        <div className="comment-right-top">
-          <p className="modal-right-heading-name">{auther}</p>
-          <p className="comment-text">{comment}</p>
-        </div>
-        <div className="comment-right-reactions">
-          <span>{created_time}</span>
-          <span>{likes} likes</span>
-          <span>reply</span>
+        <div className="comment-right-elements">
+          <div className="comment-right">
+            <div className="comment-right-top">
+              <p className="modal-right-heading-name">{auther}</p>
+              <p className="comment-text">{comment}</p>
+            </div>
+            <div className="comment-right-reactions">
+              <span>{created_time}</span>
+              <span onClick={handleLike}>{likes} likes</span>
+              <span onClick={() => setIsReplyComment(!isReplyComment)}>
+                reply
+              </span>
+            </div>
+          </div>
         </div>
       </div>
+      {isReplyComment && <ReplyCommentBox />}
     </div>
   );
 };
@@ -47,7 +87,37 @@ const CommentModal = ({
   comments,
   image,
   description,
+  post_pk,
 }) => {
+  const [comment, setComment] = useState("");
+  const [isCommentPosted, setIsCommentPosted] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAllPosts());
+  }, [isCommentPosted]);
+
+  const commentSubmitHandler = async (e) => {
+    e.preventDefault();
+    setIsCommentPosted(true);
+    try {
+      const token = cookies.get("auth_token");
+      const response = await axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/post/${post_pk}/comment/`,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+        data: {
+          comment: comment,
+        },
+      });
+      setComment("");
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <div className="comment-modal" onClick={() => setCommentModalClick(false)}>
       <span className="Close">X</span>
@@ -110,12 +180,39 @@ const CommentModal = ({
             </div>
           )}
           {/* post a comment here  */}
-          <div className="post-comment">
-            <input type="text" placeholder="write a comment..." autoFocus />
-            <button>Post</button>
-          </div>
+          <form className="post-comment" onSubmit={commentSubmitHandler}>
+            <input
+              className="post-comment-input"
+              type="text"
+              placeholder="write a comment..."
+              autoFocus
+              onChange={(e) => setComment(e.target.value)}
+              value={comment}
+            />
+            <button className="post-comment-btn" type="submit">
+              Post
+            </button>
+          </form>
         </div>
       </div>
+    </div>
+  );
+};
+
+const ReplyCommentBox = () => {
+  return (
+    <div className="reply-comment">
+      <form className="reply-post-comment">
+        <input
+          className="reply-comment-input"
+          type="text"
+          placeholder="write a comment..."
+          autoFocus
+        />
+        <button className="reply-post-comment-btn" type="submit">
+          Post
+        </button>
+      </form>
     </div>
   );
 };

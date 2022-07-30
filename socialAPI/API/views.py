@@ -55,9 +55,18 @@ class LoginUserAPIView(APIView):
         return Response(serializer.errors)
         # return Response("Invalid username or password")
 
+class DefaultLoginAPIView(APIView):
+    def get(self, request, token, *args, **kwargs):
+        user = Token.objects.get(key=token).user
+        login(request, user)
+        serializer = UserProfileSerializer(user.profile, many=False)
+        print('Default user loggeddin')
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
-@permission_classes([IsAuthenticated])
+
+
 class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         logout(request)
         return Response({"message": "user logged out successfull"}, status=status.HTTP_200_OK)
@@ -127,12 +136,10 @@ class GetOwnProfileAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            user = request.user.profile
-            serializer = UserProfileSerializer(user, many=False)
-            return Response({"data": serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Please login to view your profile"}, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user.profile
+        serializer = UserProfileSerializer(user, many=False)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+
 
     
 class AddFollowerAPIView(APIView):
@@ -173,6 +180,9 @@ class RemoveFollowerAPIView(APIView):
 
 
 class CommentCreateAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=pk)
         user = request.user
@@ -205,7 +215,10 @@ class AllComments(APIView):
 
 
 class CommentAddLikeAPIView(APIView):
-    def get(self, request, pk, *args, **kwargs):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk, *args, **kwargs):
         try:
             comment = Comment.objects.get(pk=pk)
         except:

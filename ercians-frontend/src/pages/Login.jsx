@@ -2,27 +2,83 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
-import { userLogin, getUser } from "../store/userSlice";
+import { userLogin, getUser, login } from "../store/userSlice";
 import "../styles/Login.css";
 import Logo from "../assets/images/ERCians-logo.png";
 import Error from "../components/Error";
 import { STATUS } from "../store/userSlice";
+import axios from "axios";
+
+const cookies = new Cookies();
 
 const Login = () => {
   const userStatus = useSelector((state) => state.user.status);
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const userLogin = async (email, password) => {
+    try {
+      const loginResponse = await axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/auth/login/",
+        data: {
+          email: email,
+          password: password,
+        },
+      });
+
+      const token = await loginResponse.data.token;
+      return token;
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const getUser = async (token) => {
+    if (!token) {
+      throw "Incorrect email or password";
+    } else {
+      cookies.set("auth_token", token); // setting the auth token in the cookie
+      try {
+        const userResponse = await axios.get(
+          "http://127.0.0.1:8000/api/profile/getme/",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        const user = await userResponse.data;
+        return user;
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(userLogin({ email, password }));
-    navigate("/");
+    console.log("clicked");
+    try {
+      const token = await userLogin(email, password);
+      const user = await getUser(token);
+      dispatch(login({ token, user }));
+      navigate("/");
+    } catch (err) {
+      setError(err);
+    }
+
+    console.log(error);
   };
 
   return (
     <section className="section-login">
+      {error && <Error message={error} />}
       <h1></h1>
       <div className="login">
         <Link to="/">

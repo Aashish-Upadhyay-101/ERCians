@@ -6,16 +6,34 @@ import "./styles/App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import { setDefaultLoginUser } from "./store/userSlice";
+import { login, setDefaultLoginUser } from "./store/userSlice";
 import { fetchAllPosts } from "./store/postSlice";
+import axios from "axios";
 
 function App() {
   const dispatch = useDispatch();
   const cookies = new Cookies();
 
-  const token = cookies.get("auth_token");
+  // get user logged in on page reload
   useEffect(() => {
-    dispatch(setDefaultLoginUser(token));
+    console.log("defaut user getting...");
+    async function fetchDefaultUser() {
+      try {
+        const token = cookies.get("auth_token");
+        const response = await axios({
+          method: "get",
+          url: `http://127.0.0.1:8000/api/auth/login/default-login/${token}/`,
+          data: {
+            token,
+          },
+        });
+        const user = await response.data;
+        dispatch(login({ token, user }));
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+    fetchDefaultUser();
   }, []);
 
   return (

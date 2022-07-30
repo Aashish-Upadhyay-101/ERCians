@@ -6,6 +6,7 @@ app_name = 'social'
 urlpatterns = [
     path('auth/register/', views.RegisterUserAPIView.as_view(), name="register"),
     path('auth/login/', views.LoginUserAPIView.as_view(), name="login"),
+    path('auth/login/default-login/<str:token>/', views.DefaultLoginAPIView.as_view(), name="default-login"),
     path('auth/logout/', views.LogoutAPIView.as_view(), name="logout"),
     path('posts/', views.PostListCreateAPIView.as_view(), name="post-list-create"),
     path('posts/<int:pk>/', views.PostRetrieveUpdateDestroyAPIView.as_view(), name="post-retrieve-update-delete"),

@@ -80,6 +80,10 @@
   display: flex;
   align-items: center;
   gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.super-comment {
   margin-bottom: 3.2rem;
 }
 
@@ -102,6 +106,15 @@
   color: grey;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.3s;
+}
+
+.comment-right-reactions > span:hover {
+  color: #a875fd;
+}
+
+.post-comment {
+  height: 4.8rem;
 }
 
 .post-comment {
@@ -111,7 +124,7 @@
   position: relative;
 }
 
-.post-comment > input {
+.post-comment-input {
   height: 4.8rem;
   flex: 1;
   outline: none;
@@ -122,8 +135,57 @@
   background-color: rgba(0, 0, 0, 0.081);
 }
 
-.post-comment > button {
+.reply-comment {
+  animation: flyin 0.2s alternate;
+  z-index: 1000;
+}
+
+@keyframes flyin {
+  0% {
+    position: absolute;
+    transform: translateX(20rem);
+  }
+  100% {
+    transform: translatey(0);
+    position: static;
+  }
+}
+
+.reply-post-comment {
+  display: flex;
+  position: relative;
+  margin-left: 5.6rem;
+}
+
+.reply-comment-input {
+  /* flex: 1; */
+  outline: none;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.6rem;
+  padding: 8px 8.2rem 8px 1.8rem;
+  background-color: rgba(0, 0, 0, 0.081);
+}
+
+.reply-post-comment-btn {
   position: absolute;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  padding: 8px 2.4rem;
+  outline: none;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #a875fd;
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+.post-comment-btn {
+  position: absolute;
+  margin: 0;
   top: 0;
   bottom: 0;
   right: 0;
