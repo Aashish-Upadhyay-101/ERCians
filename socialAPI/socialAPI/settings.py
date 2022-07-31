@@ -158,7 +158,7 @@ CSRF_TRUSTED_ORIGINS = ['chrome-extension://aicmkgpgakddgnaphhhpliifpcfhicfo']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://192.168.1.84:3000",
+    "http://192.168.1.76:3000",
 ]
 
 

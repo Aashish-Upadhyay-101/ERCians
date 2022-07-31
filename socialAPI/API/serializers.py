@@ -1,4 +1,3 @@
-from dataclasses import fields
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
@@ -14,7 +13,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, style={'input_type': 'password'})
     
     class Meta:
-        model = User 
+        model = User
         fields = ['username', 'email', 'password']
 
     def create(self, validated_data):
@@ -88,6 +87,7 @@ class PostSerializer(serializers.ModelSerializer):
             comment_dict['comment'] = comment.comment
             comment_dict['likes'] = len(comment.likes.all())
             comment_dict['created_on'] = comment.created_on
+            comment_dict['isReplyComment'] = True if comment.sub_comment else False
             
             comment_list.append(comment_dict)
             del comment_dict

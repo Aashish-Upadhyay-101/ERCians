@@ -5,22 +5,26 @@ import Cookies from "universal-cookie";
 import { userLogin, getUser, login } from "../store/userSlice";
 import "../styles/Login.css";
 import Logo from "../assets/images/ERCians-logo.png";
-import Error from "../components/Error";
+// import Error from "../components/Error";
 import { STATUS } from "../store/userSlice";
 import axios from "axios";
 
 const cookies = new Cookies();
 
 const Login = () => {
-  const userStatus = useSelector((state) => state.user.status);
+  const userStatus = useSelector((state) => state.user.status); // currently this is useless
   const dispatch = useDispatch();
+
+  // input from the users
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // handle user login and returns 'auth_token' from the backend
   const userLogin = async (email, password) => {
     try {
+      // email and password is provided during login and token is return in loginResponse
       const loginResponse = await axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/auth/login/",
@@ -37,12 +41,15 @@ const Login = () => {
     }
   };
 
+  // get the user who is logged in after userLogin function is get called
   const getUser = async (token) => {
+    // if there is no token it means user entered wrong credentials (email or password)
     if (!token) {
       throw "Incorrect email or password";
     } else {
       cookies.set("auth_token", token); // setting the auth token in the cookie
       try {
+        // getting the user from the backend request
         const userResponse = await axios.get(
           "http://127.0.0.1:8000/api/profile/getme/",
           {
@@ -61,12 +68,16 @@ const Login = () => {
     }
   };
 
+  // handle the form submittions
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("clicked");
+    // console.log("clicked");
     try {
+      // the the token from userLogin() function and logged in user from getUser() function
       const token = await userLogin(email, password);
       const user = await getUser(token);
+
+      // dispatching event to set user token and actual logged in user in the react-store
       dispatch(login({ token, user }));
       navigate("/");
     } catch (err) {
@@ -78,7 +89,7 @@ const Login = () => {
 
   return (
     <section className="section-login">
-      {error && <Error message={error} />}
+      {/* {error && <Error message={error} />} */}
       <h1></h1>
       <div className="login">
         <Link to="/">

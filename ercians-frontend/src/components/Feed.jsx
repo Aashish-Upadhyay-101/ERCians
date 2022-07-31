@@ -7,10 +7,13 @@ import "../styles/fontawesome.css";
 import Post from "./Post";
 import PostModal from "./PostModal";
 
+// main feed page where all the posts are displayed
 const Feed = () => {
-  const posts = useSelector((state) => state.posts.posts);
+  const posts = useSelector((state) => state.posts.posts); // getting all the post from redux store
   const dispatch = useDispatch();
-  const [modalClick, setModalClick] = useState(false);
+  const [modalClick, setModalClick] = useState(false); // post modal
+
+  // getting currently logged in user data stored in redux store
   const user = useSelector((state) => {
     if (
       state &&
@@ -22,12 +25,14 @@ const Feed = () => {
     }
   });
 
-  // might use this for comment fetch as well
+  // fetch all the post when user posts new post
+  // responsible for updating and re-rendering the feed componenet everytime user posts new post
   useEffect(() => {
     dispatch(fetchAllPosts());
   }, [modalClick]);
 
   return (
+    // only display the upload section if the user is logged in
     <div className="feed">
       {JSON.stringify(user) === "{}" ? (
         ""
@@ -57,8 +62,10 @@ const Feed = () => {
           </div>
         </div>
       )}
+      {/* to pop up the post modal  */}
       {modalClick && <PostModal setModalClick={setModalClick} />}
 
+      {/* rendering the </Post> component and passing the necessary props  */}
       {posts.map((post, index) => (
         <Post
           key={index}

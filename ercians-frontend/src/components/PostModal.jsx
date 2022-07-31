@@ -8,14 +8,15 @@ import "../styles/Feed.css";
 import "../styles/Post.css";
 
 const PostModal = ({ setModalClick }) => {
-  const posts = useSelector((state) => state.posts.posts);
-  const user = useSelector((state) => state.user.loggedInUser.data);
-  const [description, setDescription] = useState("");
+  const posts = useSelector((state) => state.posts.posts); // getting all the posts from redux-store
+  const user = useSelector((state) => state.user.loggedInUser.data); // getitng user info from redux-store
+  const [description, setDescription] = useState(""); // post description input box
   // const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // posting the post and sending request in backend
     const cookies = new Cookies();
     const token = cookies.get("auth_token");
 
@@ -36,6 +37,7 @@ const PostModal = ({ setModalClick }) => {
   };
 
   return (
+    // event bubbling on PostModal
     <div className="postmodal" onClick={() => setModalClick(false)}>
       <div className="postmodal__modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal__header">

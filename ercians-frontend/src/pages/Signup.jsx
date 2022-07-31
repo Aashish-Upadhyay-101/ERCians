@@ -10,22 +10,29 @@ const Signup = () => {
   const password = useRef();
   const confirmPassword = useRef();
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // react-router-dom to navigate user inside the app
 
+  // submit register form handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const auth_token = localStorage.getItem("auth_token");
-    const response = await axios.post(
-      "http://127.0.0.1:8000/api/auth/register/",
-      {
-        username: username.current.value,
-        email: email.current.value,
-        password: password.current.value,
-      }
-    );
+    // const auth_token = localStorage.getItem("auth_token");
 
-    navigate("/login");
+    // making request in the backend to register new user
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/auth/register/",
+        {
+          username: username.current.value,
+          email: email.current.value,
+          password: password.current.value,
+        }
+      );
+
+      navigate("/login"); // naviate to login screen after registration
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

@@ -66,8 +66,9 @@ class DefaultLoginAPIView(APIView):
 
 
 class LogoutAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request):
+    def post(self, request):
         logout(request)
         return Response({"message": "user logged out successfull"}, status=status.HTTP_200_OK)
 
@@ -204,7 +205,9 @@ class CommentCreateAPIView(APIView):
 class CommentDeleteAPIView(generics.DestroyAPIView):
     queryset = Comment.objects.all()
     lookup_field = 'pk'
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, IsCommentOwner]
+
 
 
 class AllComments(APIView):
@@ -229,7 +232,7 @@ class CommentAddLikeAPIView(APIView):
             is_liked = True 
 
         if is_liked:
-            comment.likes.remove(request.user)
+            comment.likes.remove(request.user) 
         else:
             comment.likes.add(request.user)
 
@@ -239,6 +242,9 @@ class CommentAddLikeAPIView(APIView):
 
 
 class CommentReplyAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, post_pk, comment_pk, *args, **kwargs):
         try:
             post = Post.objects.get(pk=post_pk)

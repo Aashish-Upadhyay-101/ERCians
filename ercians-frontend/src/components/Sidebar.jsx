@@ -5,14 +5,31 @@ import { logout } from "../store/userSlice";
 import ERCiansLogo from "../assets/images/ERCians-logo.png";
 import "../styles/Sidebar.css";
 import "../styles/fontawesome.css";
+import axios from "axios";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      // logout request in backend
+      const token = cookies.get("auth_token");
+      const response = await axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/auth/logout/",
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      dispatch(logout()); // logout the user when logout is clicked
+      navigate("/login");
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

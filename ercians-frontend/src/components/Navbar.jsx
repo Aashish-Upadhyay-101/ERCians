@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 
 const Navbar = () => {
-  const user_token = useSelector((state) => state.user.token);
+  const user_token = useSelector((state) => state.user.token); // getting the logged in user token from redux store
 
   return (
     <nav className="navbar">
@@ -20,6 +20,7 @@ const Navbar = () => {
             <ion-icon name="chatbubbles-outline"></ion-icon>
           </a>
         </li>
+        {/* if there is token it means user is logged in so hide login button from navbar  */}
         {user_token === "" ? (
           <li className="navbar-item">
             <Link to="/login" className="navbar-link">

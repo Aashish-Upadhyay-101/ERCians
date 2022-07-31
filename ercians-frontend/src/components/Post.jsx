@@ -11,8 +11,10 @@ import CommentModal from "./CommentModal";
 
 // TimeAgo.addDefaultLocale(en);
 
+// django time to js time in formatable way
 const timeAgo = new TimeAgo("en-US");
 
+//cookies
 const cookies = new Cookies();
 
 const Post = ({
@@ -25,7 +27,6 @@ const Post = ({
   likes,
   comments,
 }) => {
-  // const postRef = useRef();
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const user = useSelector((state) => state.user.loggedInUser.data);
@@ -35,7 +36,11 @@ const Post = ({
   const [commentModalClick, setCommentModalClick] = useState(false);
 
   // default like in the third post why this is happening?? I think it must be in dispatch function
+
+  // if the user has already liked the post in the past then the 'like' state is set to true for those post
+  // so that user can see the 'loved' icon already present in the post
   useEffect(() => {
+    // check if the user is present in the likes list
     for (let i = 0; i < likes.length; i++) {
       if (likes[i].id === user.id) {
         setLike(true);
@@ -43,17 +48,23 @@ const Post = ({
     }
   }, [user]);
 
+  // handling post like
   const handleLike = async () => {
     setLike(!like);
 
-    const response = await axios({
-      method: "get",
-      url: `http://127.0.0.1:8000/api/post/${id}/like/`,
-      headers: {
-        Authorization: `Token ${cookies.get("auth_token")}`,
-      },
-    });
-    dispatch(fetchAllPosts());
+    try {
+      // send like request on backend if successfully done then we fetch all the post again to update and re-render the components
+      const response = await axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/post/${id}/like/`,
+        headers: {
+          Authorization: `Token ${cookies.get("auth_token")}`,
+        },
+      });
+      dispatch(fetchAllPosts());
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

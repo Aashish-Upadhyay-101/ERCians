@@ -16,7 +16,9 @@ function App() {
 
   // get user logged in on page reload
   useEffect(() => {
-    console.log("defaut user getting...");
+    // console.log("defaut user getting...");
+
+    // this function return user that the token belongs to
     async function fetchDefaultUser() {
       try {
         const token = cookies.get("auth_token");
@@ -28,7 +30,7 @@ function App() {
           },
         });
         const user = await response.data;
-        dispatch(login({ token, user }));
+        dispatch(login({ token, user })); // login action to set user and token to global state
       } catch (err) {
         console.log(err.message);
       }
