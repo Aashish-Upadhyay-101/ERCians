@@ -76,7 +76,6 @@ const Feed = () => {
           image={post.image}
           created_on={post.created_on}
           likes={post.likes}
-          comments={post.comments}
         />
       ))}
     </div>
