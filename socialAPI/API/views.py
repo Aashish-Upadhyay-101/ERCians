@@ -253,8 +253,8 @@ class CommentReplyAPIView(APIView):
             return Response({"message": "The post or comment no longer exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         if comment.post.id != post.id:
-            print('comment', comment.post.id)
-            print('post', post.id)
+            # print('comment', comment.post.id)
+            # print('post', post.id)
             return Response({"message": "The post or comment no longer exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         

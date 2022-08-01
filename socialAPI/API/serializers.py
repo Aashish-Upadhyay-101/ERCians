@@ -88,6 +88,8 @@ class PostSerializer(serializers.ModelSerializer):
             comment_dict['likes'] = len(comment.likes.all())
             comment_dict['created_on'] = comment.created_on
             comment_dict['isReplyComment'] = True if comment.sub_comment else False
+            if comment_dict['isReplyComment']:
+                comment_dict['parentComment'] = comment.sub_comment.id
             
             comment_list.append(comment_dict)
             del comment_dict
@@ -106,6 +108,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     likes = serializers.ListField(child=serializers.DictField(), source='get_likes', read_only=True)
+
     
     class Meta:
         model = Comment 

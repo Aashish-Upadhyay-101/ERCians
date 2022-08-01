@@ -15,8 +15,6 @@ const timeAgo = new TimeAgo("en-US");
 // cookies instance
 const cookies = new Cookies();
 
-// comment ma  reply, ( sub comment fetch garera modal ma display garna baki xa tyo voli garxu aba teso vae )
-// reply gareko comment lai fetch garera respective comments of tala display garaunu pani parxa
 // post ma photo haru halna milni system
 // profile visit and profile picture update update
 // follow and unfollow user
@@ -40,7 +38,7 @@ const Comment = ({
   comment,
   likes,
   created_on,
-  isReply,
+  all_comments,
 }) => {
   // converting django timezone to js date object
   const date = new Date(created_on);
@@ -52,19 +50,18 @@ const Comment = ({
   // component state
   const [isCommentLiked, setIsCommentLiked] = useState(false); // to check if user liked the comment or not
   const [isReplyComment, setIsReplyComment] = useState(false); // to check if a comment is sub-comment or not
+  const [subComments, setSubComments] = useState([]);
+  const [isSubCommentLiked, setIsSubCommentLiked] = useState(false); // to re-render the component after reply is liked
 
   // handling side effects
   useEffect(() => {
-    dispatch(fetchAllPosts()); // fetching all the post after the state change to display updated state in component
+    const replyComment = all_comments.filter(
+      (comment, index) => comment.parentComment === id
+    );
 
-    // fetch all the sub comment of comment and display here
-    // async function fetchALlSubComments() {
-    //   const response = await axios({
-    //     method: "get",
-    //     url: `http://127.0.0.1:8000/api/post/${post_pk}/comment/${comment_pk}/all-sub-comments/`,
-    //   });
-    // }
-  }, [comment, isCommentLiked]);
+    setSubComments(replyComment);
+    dispatch(fetchAllPosts()); // fetching all the post after the state change to display updated state in component
+  }, [comment, isSubCommentLiked, likes, all_comments, isCommentLiked]);
 
   // handle like event when user like the comment
   const handleLike = async () => {
@@ -91,7 +88,7 @@ const Comment = ({
   return (
     <div className="super-comment">
       {/* recently updated code this is */}
-      <div className={isReply ? "comment margin-left" : "comment"}>
+      <div className="comment">
         <img
           className="modal-right-heading-image"
           src={`http://127.0.0.1:8000` + profile_picture}
@@ -112,6 +109,23 @@ const Comment = ({
           </div>
         </div>
       </div>
+      {/* display subcomment here  */}
+      {subComments.map((subComment, index) => {
+        return (
+          <SubComment
+            key={index}
+            post_pk={post_pk}
+            id={subComment.id}
+            auther={subComment.auther}
+            profile_picture={subComment.profile_picture}
+            comment={subComment.comment}
+            likes={subComment.likes}
+            created_on={subComment.created_on}
+            setIsSubCommentLiked={setIsSubCommentLiked}
+          />
+        );
+      })}
+
       {isReplyComment && <ReplyCommentBox comment_pk={id} post_pk={post_pk} />}
     </div>
   );
@@ -165,6 +179,7 @@ const CommentModal = ({
     } catch (err) {
       console.log(err.message);
     }
+    dispatch(fetchAllPosts());
   };
 
   // rendering the UI
@@ -210,7 +225,7 @@ const CommentModal = ({
           {comments.length > 0 ? (
             <div className="comment-modal-comments">
               {comments.map((comment, index) => {
-                return (
+                return !comment.isReplyComment ? (
                   <Comment
                     key={index}
                     id={comment.id}
@@ -221,8 +236,9 @@ const CommentModal = ({
                     created_on={comment.created_on}
                     likes={comment.likes}
                     isReply={comment.isReplyComment}
+                    all_comments={comments}
                   />
-                );
+                ) : null;
               })}
             </div>
           ) : (
@@ -256,7 +272,13 @@ const CommentModal = ({
 
 // this box get prompt when someone click on reply comment
 const ReplyCommentBox = ({ post_pk, comment_pk }) => {
+  const dispatch = useDispatch();
   const [comment, setComment] = useState("");
+  const [isReplySubmit, setIsReplySubmit] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchAllPosts());
+  }, [isReplySubmit]);
 
   const handleReplyComment = async (e) => {
     e.preventDefault();
@@ -274,9 +296,11 @@ const ReplyCommentBox = ({ post_pk, comment_pk }) => {
         },
       });
       setComment("");
+      setIsReplySubmit(true);
     } catch (err) {
       console.log(err.message);
     }
+    dispatch(fetchAllPosts());
   };
 
   return (
@@ -285,7 +309,7 @@ const ReplyCommentBox = ({ post_pk, comment_pk }) => {
         <input
           className="reply-comment-input"
           type="text"
-          placeholder="write a comment..."
+          placeholder="write a reply..."
           autoFocus
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -299,3 +323,80 @@ const ReplyCommentBox = ({ post_pk, comment_pk }) => {
 };
 
 export default CommentModal;
+
+const SubComment = ({
+  post_pk,
+  id,
+  auther,
+  profile_picture,
+  comment,
+  likes,
+  created_on,
+  setIsSubCommentLiked,
+}) => {
+  // converting django timezone to js date object
+  const date = new Date(created_on);
+  const created_time = timeAgo.format(date.getTime(), "mini");
+
+  // react-redux
+  const dispatch = useDispatch();
+
+  // component state
+  const [isCommentLiked, setIsCommentLiked] = useState(false); // to check if user liked the comment or not
+  // const [isReplyComment, setIsReplyComment] = useState(false); // to check if a comment is sub-comment or not
+
+  // handling side effects
+  useEffect(() => {
+    setIsSubCommentLiked(!isCommentLiked);
+    dispatch(fetchAllPosts()); // fetching all the post after the state change to display updated state in component
+  }, [comment, isCommentLiked, setIsSubCommentLiked]);
+
+  // handle like event when user like the comment
+  const handleLike = async () => {
+    try {
+      /* 
+        getting the 'auth_token' cookies and use it inside the headers of the request
+        Authorization: `Token ${auth_token}`
+      */
+      const token = cookies.get("auth_token");
+      const response = await axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/comment/${id}/like/`,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      setIsCommentLiked(!isCommentLiked);
+    } catch (err) {
+      console.log(err.message);
+    }
+    dispatch(fetchAllPosts());
+  };
+
+  // rendering the UI
+  return (
+    <div className="super-comment">
+      {/* recently updated code this is */}
+      <div className="margin-left comment">
+        <img
+          className="modal-right-heading-image"
+          src={`http://127.0.0.1:8000` + profile_picture}
+        />
+        <div className="comment-right-elements">
+          <div className="comment-right">
+            <div className="comment-right-top">
+              <p className="modal-right-heading-name">{auther}</p>
+              <p className="comment-text">{comment}</p>
+            </div>
+            <div className="comment-right-reactions">
+              <span>{created_time}</span>
+              <span onClick={handleLike}>{likes} likes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* {isReplyComment && <ReplyCommentBox comment_pk={id} post_pk={post_pk} />} */}
+    </div>
+  );
+};
