@@ -111,13 +111,15 @@ class Comment(models.Model):
     
     @property
     def all_sub_comments(self):
-        return Comment.objects.filter(sub_comment=self).order_by('-created_on').all()
+        return Comment.objects.filter(sub_comment=self).all()
+        # return Comment.objects.filter(sub_comment=self).order_by('-created_on').all()
 
     def get_likes(self):
         likes = self.likes.all()
         likes_list = []
         for like in likes:
             likes_dict = {}
+            likes_dict['id'] = like.profile.id
             likes_dict['name'] = like.username
             likes_dict['profile_picture'] = like.profile.profile_picture.url 
             likes_list.append(likes_dict)

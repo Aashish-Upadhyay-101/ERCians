@@ -18,6 +18,7 @@ urlpatterns = [
     path('post/<int:pk>/like/', views.AddLikeAPIView.as_view(), name='like'),
     path('post/<int:pk>/comment/', views.CommentCreateAPIView.as_view(), name="create-comment"),
     path('comments/', views.AllComments.as_view(), name="all-comment"),
+    path('comments/<int:pk>/',views.CommentGetOneAPIView.as_view(), name="get-one-comment"),
     path('comment/<int:pk>/delete/', views.CommentDeleteAPIView.as_view(), name="delete-comment"),
     path('comment/<int:pk>/like/', views.CommentAddLikeAPIView.as_view(), name="like-comment"),
     path('post/<int:post_pk>/comment/<int:comment_pk>/reply-comment/', views.CommentReplyAPIView.as_view(), name="reply-comment"),

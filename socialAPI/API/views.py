@@ -180,6 +180,13 @@ class RemoveFollowerAPIView(APIView):
             return Response({"message": "There is problem unfollowing the user please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CommentGetOneAPIView(APIView):
+    def get(self, request, pk, *args, **kwargs):
+        comment = Comment.objects.get(pk=pk)
+        serializer = CommentSerializer(comment).data 
+        return Response({'data': serializer}, status=status.HTTP_200_OK)
+
+
 class CommentCreateAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

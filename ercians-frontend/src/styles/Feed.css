@@ -1,6 +1,33 @@
 .feed {
   width: 65rem;
-  padding: 4.8rem 2.4rem 2.4rem 3.2rem;
+  padding: 0 2.4rem 2.4rem 3.2rem;
+}
+
+.user__search {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background-color: white;
+  margin-bottom: 2.4rem;
+  margin-top: 4.4rem;
+  height: 4.2rem;
+  padding: 1.2rem 1.8rem;
+  border-radius: 12px;
+}
+
+.user__search > input::placeholder {
+  color: #999;
+}
+
+.user__search > ion-icon {
+  color: #999;
+}
+
+.user__search > input {
+  border: none;
+  outline: none;
+  font-size: 1.8rem;
+  flex: 1;
 }
 
 .upload__post {
@@ -14,7 +41,7 @@
   gap: 1.2rem;
 }
 
-.upload__post__top > img {
+.upload__post__top > a > img {
   height: 50px;
   width: 50px;
   border-radius: 12px;

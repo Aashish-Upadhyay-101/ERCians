@@ -9,6 +9,12 @@ import Signup from "./pages/Signup";
 import { login, setDefaultLoginUser } from "./store/userSlice";
 import { fetchAllPosts } from "./store/postSlice";
 import axios from "axios";
+import Sidebar from "./components/Sidebar";
+import Feed from "./components/Feed";
+import RightSidebar from "./components/RightSidebar";
+import Navbar from "./components/Navbar";
+import Profile from "./pages/Profile";
+import Messanger from "./pages/Messanger";
 
 function App() {
   const dispatch = useDispatch();
@@ -43,8 +49,22 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route
+            path="/profile/:profile"
+            element={
+              <div className="home">
+                <Navbar />
+                <div className="app">
+                  <Sidebar />
+                  <Profile />
+                  {/* <RightSidebar /> */}
+                </div>
+              </div>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/message" element={<Messanger />} />
         </Routes>
       </BrowserRouter>
     </div>

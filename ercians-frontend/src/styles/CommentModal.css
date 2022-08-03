@@ -202,3 +202,8 @@
 .margin-left {
   margin-left: 4.4rem;
 }
+
+.comment_liked {
+  color: #a875fd !important;
+  /* background-color: red; */
+}

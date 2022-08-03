@@ -11,10 +11,22 @@ const PostModal = ({ setModalClick }) => {
   const posts = useSelector((state) => state.posts.posts); // getting all the posts from redux-store
   const user = useSelector((state) => state.user.loggedInUser.data); // getitng user info from redux-store
   const [description, setDescription] = useState(""); // post description input box
+  const [postImage, setPostImage] = useState(null);
   // const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // setting form data for sending image upload to the server
+    const postData = new FormData();
+    postData.append("description", description);
+    if (postImage) {
+      postData.append("image", postImage);
+    }
+
+    // for (let d of data.entries()) {
+    //   console.log(d);
+    // }
 
     // posting the post and sending request in backend
     const cookies = new Cookies();
@@ -23,11 +35,9 @@ const PostModal = ({ setModalClick }) => {
     const response = await axios({
       url: "http://127.0.0.1:8000/api/posts/",
       method: "post",
-      data: {
-        description: description,
-      },
+      data: postData,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Token ${token}`,
       },
     });
@@ -48,7 +58,7 @@ const PostModal = ({ setModalClick }) => {
           <p className="post__header__right__name">{user.name}</p>
         </div>
         <div className="modal__middle">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
             <textarea
               rows={3}
               className="post__text"
@@ -67,7 +77,11 @@ const PostModal = ({ setModalClick }) => {
                   Photo/video
                 </div>
               </label>
-              <input id="file" type="file" />
+              <input
+                id="file"
+                type="file"
+                onChange={(e) => setPostImage(e.target.files[0])}
+              />
             </div>
             <button type="submit" className="btn btn-primary post_btn">
               Post

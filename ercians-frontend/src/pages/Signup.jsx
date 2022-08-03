@@ -44,20 +44,36 @@ const Signup = () => {
         <h2 className="signup__header">Signup</h2>
         <form onSubmit={handleSubmit}>
           <div className="signup__form__div">
-            <label>Username</label>
-            <input ref={username} type="text" placeholder="JohnDoe" />
-          </div>
-          <div className="signup__form__div">
-            <label>Email</label>
-            <input ref={email} type="email" placeholder="JohnDoe@example.com" />
-          </div>
-          <div className="signup__form__div">
-            <label>Password</label>
-            <input ref={password} type="password" placeholder="min 8 digits" />
-          </div>
-          <div className="signup__form__div">
-            <label>Comfirm password</label>
+            <label for="username">Username</label>
             <input
+              id="username"
+              ref={username}
+              type="text"
+              placeholder="JohnDoe"
+            />
+          </div>
+          <div className="signup__form__div">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              ref={email}
+              type="email"
+              placeholder="JohnDoe@example.com"
+            />
+          </div>
+          <div className="signup__form__div">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              ref={password}
+              type="password"
+              placeholder="min 8 digits"
+            />
+          </div>
+          <div className="signup__form__div">
+            <label for="confirmpassword">Comfirm password</label>
+            <input
+              id="confirmpassword"
               ref={confirmPassword}
               type="password"
               placeholder="re enter password"

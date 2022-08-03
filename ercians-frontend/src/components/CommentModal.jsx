@@ -3,7 +3,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import "../styles/CommentModal.css";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchAllPosts } from "../store/postSlice";
 import { useEffect } from "react";
 import Cookies from "universal-cookie";
@@ -15,7 +15,8 @@ const timeAgo = new TimeAgo("en-US");
 // cookies instance
 const cookies = new Cookies();
 
-// post ma photo haru halna milni system
+// merging replyCommentBox and Comment componenet together to fix this bug
+// login using email and password (the username and password login is by default so now we want to replace that)
 // profile visit and profile picture update update
 // follow and unfollow user
 // displaying only the relivent post (i.e. only the post of the user that he/she has followed)
@@ -39,11 +40,13 @@ const Comment = ({
   likes,
   created_on,
   all_comments,
+  refreshComments,
 }) => {
   // converting django timezone to js date object
   const date = new Date(created_on);
   const created_time = timeAgo.format(date.getTime(), "mini");
 
+  const user = useSelector((state) => state.user.loggedInUser.data);
   // react-redux
   const dispatch = useDispatch();
 
@@ -51,17 +54,45 @@ const Comment = ({
   const [isCommentLiked, setIsCommentLiked] = useState(false); // to check if user liked the comment or not
   const [isReplyComment, setIsReplyComment] = useState(false); // to check if a comment is sub-comment or not
   const [subComments, setSubComments] = useState([]);
-  const [isSubCommentLiked, setIsSubCommentLiked] = useState(false); // to re-render the component after reply is liked
+  const [isSubCommentLiked, setIsSubCommentLiked] = useState(false);
+  const [defaultCommentLike, setDefaultCommentLike] = useState(false);
+  const [commentReply, setCommentReply] = useState("");
+  const [isReplySubmit, setIsReplySubmit] = useState(false);
 
   // handling side effects
   useEffect(() => {
+    console.log(isReplySubmit);
     const replyComment = all_comments.filter(
       (comment, index) => comment.parentComment === id
     );
 
     setSubComments(replyComment);
+
+    async function fetchComment() {
+      try {
+        const response = await axios({
+          method: "get",
+          url: `http://127.0.0.1:8000/api/comments/${id}/`,
+        });
+
+        const data = await response.data.data;
+        // console.log(data.likes);
+
+        for (let like of data.likes) {
+          if (user.id === like.id) {
+            setDefaultCommentLike(true);
+          } else {
+            setDefaultCommentLike(false);
+          }
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+    fetchComment();
+    refreshComments();
     dispatch(fetchAllPosts()); // fetching all the post after the state change to display updated state in component
-  }, [comment, isSubCommentLiked, likes, all_comments, isCommentLiked]);
+  }, [isCommentLiked, isReplySubmit, id]);
 
   // handle like event when user like the comment
   const handleLike = async () => {
@@ -79,9 +110,55 @@ const Comment = ({
         },
       });
       setIsCommentLiked(!isCommentLiked); // updating comment like state
+      setDefaultCommentLike(!defaultCommentLike);
     } catch (err) {
       console.log(err.message);
     }
+  };
+
+  const handleSubCommentLike = async (subCommentId) => {
+    try {
+      /* 
+        getting the 'auth_token' cookies and use it inside the headers of the request
+        Authorization: `Token ${auth_token}`
+      */
+      const token = cookies.get("auth_token");
+      const response = await axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/comment/${subCommentId}/like/`,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      setIsSubCommentLiked(!isSubCommentLiked);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  // updated code this is
+  const handleReplyComment = async (e) => {
+    e.preventDefault();
+
+    try {
+      const token = cookies.get("auth_token"); // getting token and setting in headers
+      const response = await axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/post/${post_pk}/comment/${id}/reply-comment/`,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+        data: {
+          comment: commentReply,
+        },
+      });
+      setIsReplySubmit(!isReplySubmit);
+      setCommentReply("");
+    } catch (err) {
+      console.log(err.message);
+    }
+    dispatch(fetchAllPosts());
+    refreshComments();
   };
 
   // rendering the UI
@@ -101,10 +178,15 @@ const Comment = ({
             </div>
             <div className="comment-right-reactions">
               <span>{created_time}</span>
-              <span onClick={handleLike}>{likes} likes</span>
-              <span onClick={() => setIsReplyComment(!isReplyComment)}>
-                reply
+              <span
+                className={defaultCommentLike ? "comment_liked" : ""}
+                onClick={handleLike}
+              >
+                {likes} likes
               </span>
+              {/* <span onClick={() => setIsReplyComment(!isReplyComment)}>
+                reply
+              </span> */}
             </div>
           </div>
         </div>
@@ -121,12 +203,28 @@ const Comment = ({
             comment={subComment.comment}
             likes={subComment.likes}
             created_on={subComment.created_on}
-            setIsSubCommentLiked={setIsSubCommentLiked}
+            handleSubCommentLike={handleSubCommentLike}
           />
         );
       })}
 
-      {isReplyComment && <ReplyCommentBox comment_pk={id} post_pk={post_pk} />}
+      {isReplyComment && (
+        <div className="reply-comment">
+          <form className="reply-post-comment" onSubmit={handleReplyComment}>
+            <input
+              className="reply-comment-input"
+              type="text"
+              placeholder="write a reply..."
+              autoFocus
+              value={commentReply}
+              onChange={(e) => setCommentReply(e.target.value)}
+            />
+            <button className="reply-post-comment-btn" type="submit">
+              Post
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
@@ -144,6 +242,7 @@ const CommentModal = ({
   image,
   description,
   post_pk,
+  refreshComments,
 }) => {
   const [comment, setComment] = useState(""); // comment input box state
   const [isCommentPosted, setIsCommentPosted] = useState(false); // to re-render the component (used in useEffect() function)
@@ -153,7 +252,8 @@ const CommentModal = ({
   // fetching all the post when user posted the comment ( it also fetch all the comments )
   useEffect(() => {
     dispatch(fetchAllPosts());
-  }, [isCommentPosted]);
+    // console.log("hello");
+  }, []);
 
   // handling comment form submission
   const commentSubmitHandler = async (e) => {
@@ -237,6 +337,7 @@ const CommentModal = ({
                     likes={comment.likes}
                     isReply={comment.isReplyComment}
                     all_comments={comments}
+                    refreshComments={refreshComments}
                   />
                 ) : null;
               })}
@@ -271,56 +372,53 @@ const CommentModal = ({
 };
 
 // this box get prompt when someone click on reply comment
-const ReplyCommentBox = ({ post_pk, comment_pk }) => {
-  const dispatch = useDispatch();
-  const [comment, setComment] = useState("");
-  const [isReplySubmit, setIsReplySubmit] = useState(false);
+// const ReplyCommentBox = ({ post_pk, comment_pk, handleReply }) => {
+//   const dispatch = useDispatch();
+//   const [comment, setComment] = useState("");
+//   const [isReplySubmit, setIsReplySubmit] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchAllPosts());
-  }, [isReplySubmit]);
+//   const handleReplyComment = async (e) => {
+// e.preventDefault();
 
-  const handleReplyComment = async (e) => {
-    e.preventDefault();
+// try {
+//   const token = cookies.get("auth_token"); // getting token and setting in headers
+//   const response = await axios({
+//     method: "post",
+//     url: `http://127.0.0.1:8000/api/post/${post_pk}/comment/${comment_pk}/reply-comment/`,
+//     headers: {
+//       Authorization: `Token ${token}`,
+//     },
+//     data: {
+//       comment: comment,
+//     },
+//   });
+//   setComment("");
+//   setIsReplySubmit(true);
+//   handleReply(); // updated
+// } catch (err) {
+//   console.log(err.message);
+// }
+// dispatch(fetchAllPosts());
+//   };
 
-    try {
-      const token = cookies.get("auth_token"); // getting token and setting in headers
-      const response = await axios({
-        method: "post",
-        url: `http://127.0.0.1:8000/api/post/${post_pk}/comment/${comment_pk}/reply-comment/`,
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-        data: {
-          comment: comment,
-        },
-      });
-      setComment("");
-      setIsReplySubmit(true);
-    } catch (err) {
-      console.log(err.message);
-    }
-    dispatch(fetchAllPosts());
-  };
-
-  return (
-    <div className="reply-comment">
-      <form className="reply-post-comment" onSubmit={handleReplyComment}>
-        <input
-          className="reply-comment-input"
-          type="text"
-          placeholder="write a reply..."
-          autoFocus
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <button className="reply-post-comment-btn" type="submit">
-          Post
-        </button>
-      </form>
-    </div>
-  );
-};
+// return (
+//   <div className="reply-comment">
+//     <form className="reply-post-comment" onSubmit={handleReplyComment}>
+//       <input
+//         className="reply-comment-input"
+//         type="text"
+//         placeholder="write a reply..."
+//         autoFocus
+//         value={comment}
+//         onChange={(e) => setComment(e.target.value)}
+//       />
+//       <button className="reply-post-comment-btn" type="submit">
+//         Post
+//       </button>
+//     </form>
+//   </div>
+// );
+// };
 
 export default CommentModal;
 
@@ -332,7 +430,7 @@ const SubComment = ({
   comment,
   likes,
   created_on,
-  setIsSubCommentLiked,
+  handleSubCommentLike,
 }) => {
   // converting django timezone to js date object
   const date = new Date(created_on);
@@ -342,35 +440,19 @@ const SubComment = ({
   const dispatch = useDispatch();
 
   // component state
-  const [isCommentLiked, setIsCommentLiked] = useState(false); // to check if user liked the comment or not
+  const [isLike, setIsLike] = useState(false);
+  // const [isCommentLiked, setIsCommentLiked] = useState(false); // to check if user liked the comment or not
   // const [isReplyComment, setIsReplyComment] = useState(false); // to check if a comment is sub-comment or not
 
   // handling side effects
-  useEffect(() => {
-    setIsSubCommentLiked(!isCommentLiked);
-    dispatch(fetchAllPosts()); // fetching all the post after the state change to display updated state in component
-  }, [comment, isCommentLiked, setIsSubCommentLiked]);
+  // useEffect(() => {
+  //   dispatch(fetchAllPosts()); // fetching all the post after the state change to display updated state in component
+  //   console.log("this is re-rendering");
+  // }, [isLike]);
 
   // handle like event when user like the comment
-  const handleLike = async () => {
-    try {
-      /* 
-        getting the 'auth_token' cookies and use it inside the headers of the request
-        Authorization: `Token ${auth_token}`
-      */
-      const token = cookies.get("auth_token");
-      const response = await axios({
-        method: "post",
-        url: `http://127.0.0.1:8000/api/comment/${id}/like/`,
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      });
-      setIsCommentLiked(!isCommentLiked);
-    } catch (err) {
-      console.log(err.message);
-    }
-    dispatch(fetchAllPosts());
+  const handleLike = async (subCommentId) => {
+    await handleSubCommentLike(subCommentId);
   };
 
   // rendering the UI
@@ -390,7 +472,7 @@ const SubComment = ({
             </div>
             <div className="comment-right-reactions">
               <span>{created_time}</span>
-              <span onClick={handleLike}>{likes} likes</span>
+              {/* <span onClick={() => handleLike(id)}>{likes} likes</span> */}
             </div>
           </div>
         </div>

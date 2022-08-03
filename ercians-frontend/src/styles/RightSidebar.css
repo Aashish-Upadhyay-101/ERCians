@@ -60,7 +60,7 @@
 .right-sidebar__contacts__person > img {
   height: 40px;
   width: 40px;
-  border-radius: 100px;
+  border-radius: 12px;
 }
 
 .right-sidebar__contacts__person > p {

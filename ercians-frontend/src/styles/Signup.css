@@ -35,6 +35,8 @@ form {
 
 .signup__form__div > label {
   font-size: 1.6rem;
+  border: none;
+  background: none;
 }
 
 .signup__form__div > input {

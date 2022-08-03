@@ -77,7 +77,8 @@ class PostSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_comments(self, obj):
-        comments = obj.comments.all().filter(post=obj).order_by('-created_on')
+        comments = obj.comments.all().filter(post=obj).all()
+        # comments = obj.comments.all().filter(post=obj).order_by('-created_on')
         comment_list = []
         for comment in comments:
             comment_dict = {}

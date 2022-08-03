@@ -26,6 +26,7 @@ const Post = ({
   created_on,
   likes,
   comments,
+  refreshComments,
 }) => {
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
@@ -139,6 +140,7 @@ const Post = ({
           image={image}
           description={description}
           setCommentModalClick={setCommentModalClick}
+          refreshComments={refreshComments}
         />
       )}
     </div>

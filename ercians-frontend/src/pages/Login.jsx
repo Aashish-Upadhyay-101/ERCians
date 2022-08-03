@@ -98,8 +98,10 @@ const Login = () => {
         <h2 className="login__header">Login</h2>
         <form onSubmit={handleLogin}>
           <div className="login__form__div">
-            <label>Email</label>
+            {/* <label>Email</label> */}
+            <label for="email">Email</label>
             <input
+              id="email"
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="JohnDoe@example.com"
@@ -108,8 +110,9 @@ const Login = () => {
             />
           </div>
           <div className="login__form__div">
-            <label>Password</label>
+            <label for="password">Password</label>
             <input
+              id="password"
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               placeholder="min 8 digits"

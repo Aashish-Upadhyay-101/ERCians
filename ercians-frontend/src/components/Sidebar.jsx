@@ -34,7 +34,9 @@ const Sidebar = () => {
 
   return (
     <aside className="aside">
-      <img className="logo" src={ERCiansLogo} alt="logo" />
+      <Link to="/">
+        <img className="logo" src={ERCiansLogo} alt="logo" />
+      </Link>
 
       <div className="side__navigation">
         <h4 className="side__navigation__header">Menu</h4>

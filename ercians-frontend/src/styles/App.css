@@ -38,7 +38,17 @@ body {
   border-radius: 12px;
 }
 
-.btn:hover {
+.btn-small {
+  padding: 1rem 1.8rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  border-radius: 12px;
+}
+
+.btn:hover,
+.btn-small:hover {
   cursor: pointer;
 }
 
@@ -46,6 +56,19 @@ body {
   background-color: #a875fd;
   color: #fff;
   transition: all 0.3s;
+}
+
+.btn-primary-outline {
+  /* border: 2px solid #a875fd; */
+  box-shadow: inset 0px 0px 0px 2px #a875fd;
+  background: none;
+  transition: all 0.2s;
+}
+
+.btn-primary-outline:hover {
+  background-color: #a875fd;
+  color: #fff;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
