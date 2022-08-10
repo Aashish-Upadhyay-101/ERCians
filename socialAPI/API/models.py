@@ -1,3 +1,4 @@
+from dataclasses import field
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -18,6 +19,7 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=100, blank=True, null=True)
     slug = models.SlugField(max_length=100, blank=True, null=True)
     # is_activated = models.BooleanField(default=False) # this field is newly added
+
 
     def get_followers(self):
         followers = self.followers.all()
@@ -49,11 +51,17 @@ class UserProfile(models.Model):
         super(UserProfile, self).save(*args, **kwargs)
 
 
-@receiver(signals.post_save, sender=User)
+@receiver(signals.post_save, sender=User) 
 def create_save_user_profile(sender, instance, created, **kwargs):
-    print(sender)
     if created:
         UserProfile.objects.create(user=instance, name=instance.username)
+
+# this is recently added to the model
+# @receiver(signals.post_save, sender=UserProfile)
+# def update_user_profile_details(sender, instance, created, **kwargs):
+#     instance.user.username = instance.name
+#     instance.user.save()
+
     
     
 class Post(models.Model):
@@ -66,7 +74,7 @@ class Post(models.Model):
     def get_user(self):
         curr_user = vars(self.auther)
         return {
-            "id": curr_user.get("id"),
+            "id": self.auther.profile.id,
             "username": curr_user.get("username"),
             "profile_picture": self.auther.profile.profile_picture.url,
         }

@@ -55,7 +55,7 @@ const Feed = () => {
           </div>
           <div className="upload__post" onClick={() => setModalClick(true)}>
             <div className="upload__post__top">
-              <Link to="/profile/aashishupadhyay">
+              <Link to={`/profile/${user.id}/${user.name}`}>
                 <img
                   src={`http://127.0.0.1:8000${user.profile_picture}`}
                   alt="profile imagess"
@@ -91,8 +91,9 @@ const Feed = () => {
       {posts.map((post, index) => (
         <Post
           key={index}
-          id={post.id}
+          id={post.auther.id}
           auther={post.auther.username}
+          // auther_id={+post.auther.id}
           auther_profile_picture={post.auther.profile_picture}
           description={post.description}
           image={post.image}

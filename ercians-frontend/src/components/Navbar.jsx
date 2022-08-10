@@ -10,7 +10,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div></div>
       <ul className="navbar-list">
-        <li className="navbar-item">
+        {/* <li className="navbar-item">
           <a href="" className="navbar-link">
             <ion-icon name="notifications-outline"></ion-icon>
           </a>
@@ -19,7 +19,7 @@ const Navbar = () => {
           <a href="" className="navbar-link">
             <ion-icon name="chatbubbles-outline"></ion-icon>
           </a>
-        </li>
+        </li> */}
         {/* if there is token it means user is logged in so hide login button from navbar  */}
         {user_token === "" ? (
           <li className="navbar-item">

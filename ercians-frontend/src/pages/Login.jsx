@@ -47,7 +47,7 @@ const Login = () => {
     if (!token) {
       throw "Incorrect email or password";
     } else {
-      cookies.set("auth_token", token); // setting the auth token in the cookie
+      // cookies.set("auth_token", token); // setting the auth token in the cookie
       try {
         // getting the user from the backend request
         const userResponse = await axios.get(

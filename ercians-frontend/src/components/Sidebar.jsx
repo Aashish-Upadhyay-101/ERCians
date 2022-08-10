@@ -7,6 +7,7 @@ import "../styles/Sidebar.css";
 import "../styles/fontawesome.css";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import { getCookie } from "../utils/cookieController";
 
 const cookies = new Cookies();
 
@@ -17,7 +18,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       // logout request in backend
-      const token = cookies.get("auth_token");
+      const token = getCookie("auth_token");
       const response = await axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/auth/logout/",
@@ -55,9 +56,9 @@ const Sidebar = () => {
             </a>
           </li>
           <li className="side__navigation__nav__items">
-            <a href="#" className="side__navigation__nav__link">
+            <Link to="/profile/update" className="side__navigation__nav__link">
               <ion-icon name="person"></ion-icon>Profile
-            </a>
+            </Link>
           </li>
           <li className="side__navigation__nav__items">
             <a href="#" className="side__navigation__nav__link">

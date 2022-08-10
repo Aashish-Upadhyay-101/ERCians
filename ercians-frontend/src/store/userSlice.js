@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
+import { token } from "morgan";
+import { getCookie, removeCookie, setCookie } from "../utils/cookieController";
 
 // status (immutable object) -> enum alternative
 export const STATUS = Object.freeze({
@@ -32,7 +34,7 @@ const userSlice = createSlice({
   reducers: {
     // logout reducer function -> delete the 'auth_token' cookie from the browser and set the state to initialState (default state when user not logged in)
     logout(state, action) {
-      cookies.remove("auth_token", { path: "/" });
+      removeCookie("auth_token");
       return initialState;
     },
 
@@ -41,6 +43,7 @@ const userSlice = createSlice({
       state.status = STATUS.IDLE;
       state.token = action.payload.token;
       state.loggedInUser = action.payload.user;
+      setCookie("auth_token", action.payload.token);
     },
   },
 });

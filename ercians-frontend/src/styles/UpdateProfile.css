@@ -1,0 +1,106 @@
+.update-profile {
+  margin-top: 4.8rem;
+}
+
+.profile-picture__update {
+  display: flex;
+  gap: 3.2rem;
+  align-items: flex-start;
+}
+
+.profile__followers {
+  margin-top: 4.8rem;
+  display: flex;
+  /* flex-direction: column; */
+  gap: 1.8rem;
+}
+
+.followers__name {
+  font-size: 1.6rem;
+}
+
+.profile-info__update > form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2.4rem;
+}
+
+.profile-picture__update__heading {
+  font-size: 2.4rem;
+  font-weight: 400;
+  margin-bottom: 1.2rem;
+}
+
+.profile-picture__update > div > img {
+  height: 20rem;
+  width: 20rem;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.profile-picture__update button {
+  margin-top: 2.4rem;
+}
+
+label {
+  margin-top: 2.4rem;
+  border: none;
+  background: none;
+  cursor: default;
+  font-size: 2rem;
+  margin-bottom: 3px;
+}
+
+label:hover {
+  background: none;
+}
+
+.input-field {
+  height: 4.4rem;
+  padding: 0 1.2rem;
+  width: 30rem;
+  outline: none;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.8rem;
+}
+
+textarea {
+  padding: 1.2rem;
+  width: 30rem;
+  border-radius: 12px;
+  height: 9rem;
+  margin: 0;
+}
+
+.update-btn {
+  margin-top: 8rem;
+  display: block;
+  width: 100%;
+}
+
+#upload {
+  display: none;
+}
+
+.profile__password__change {
+  margin-top: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4.8rem;
+}
+
+.profile__password__change > form > div {
+  margin-bottom: -1.6rem;
+}
+
+.change__password__heading {
+  font-size: 2.4rem;
+  font-weight: 400;
+}
+
+.mt {
+  margin-top: 2.4rem;
+}

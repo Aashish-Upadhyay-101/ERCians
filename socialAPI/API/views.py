@@ -60,7 +60,6 @@ class DefaultLoginAPIView(APIView):
         user = Token.objects.get(key=token).user
         login(request, user)
         serializer = UserProfileSerializer(user.profile, many=False)
-        print('Default user loggeddin')
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -126,11 +125,22 @@ class UserProfileListAPIView(generics.ListAPIView):
     serializer_class = UserProfileSerializer
 
 
-class UserProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+class UserProfileRetrieveAPIView(generics.RetrieveUpdateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = UserProfile.objects.all()
     lookup_field = 'pk'
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated, IsOriginalUser]
+
+
+class UserProfileUpdateAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk, *args, **kwargs):
+        user_profile = UserProfile.objects.get(pk=pk)
+        print(user_profile.email)
+        return
 
 
 class GetOwnProfileAPIView(APIView):

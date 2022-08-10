@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { fetchAllPosts } from "../store/postSlice";
 import CommentModal from "./CommentModal";
+import { getCookie } from "../utils/cookieController";
+import { Link } from "react-router-dom";
 
 // TimeAgo.addDefaultLocale(en);
 
@@ -19,6 +21,7 @@ const cookies = new Cookies();
 
 const Post = ({
   id,
+  auther_id,
   auther,
   image,
   description,
@@ -59,7 +62,7 @@ const Post = ({
         method: "get",
         url: `http://127.0.0.1:8000/api/post/${id}/like/`,
         headers: {
-          Authorization: `Token ${cookies.get("auth_token")}`,
+          Authorization: `Token ${getCookie("auth_token")}`,
         },
       });
       dispatch(fetchAllPosts());
@@ -72,11 +75,13 @@ const Post = ({
     <div className="post">
       <div className="post__header">
         <div className="post__header__left">
-          <img
-            className="post__profile__picture"
-            src={`http://127.0.0.1:8000` + auther_profile_picture}
-            alt="profile picture"
-          />
+          <Link to={`profile/${id}/${auther}`}>
+            <img
+              className="post__profile__picture"
+              src={`http://127.0.0.1:8000` + auther_profile_picture}
+              alt="profile picture"
+            />
+          </Link>
 
           <div className="post__header__right__name__time">
             <p className="post__header__right__name">{auther}</p>
