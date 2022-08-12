@@ -5,22 +5,16 @@ from django.utils.encoding import smart_str
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.conf import settings 
-from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.decorators import permission_classes, authentication_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.parsers import FileUploadParser
-from .serializers import (
-    LoginUserSerializer, RegisterUserSerializer, PostSerializer, UserProfileSerializer, 
-    CommentSerializer, PasswordResetSerailizer, SetNewPasswordSerializer,
-    )
+from .serializers import (LoginUserSerializer, RegisterUserSerializer, PostSerializer, UserProfileSerializer, CommentSerializer, SetNewPasswordSerializer, UpdateUserPasswordSerializer)
 from .models import Post, UserProfile, Comment
-from .permissions import IsPostOwner, IsOriginalUser, IsCommentOwner
+from .permissions import IsPostOwner, IsCommentOwner
 
 
 class RegisterUserAPIView(APIView):
@@ -360,10 +354,17 @@ class SetNewPasswordAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         return Response({"message": "password reset successfully"}, status=status.HTTP_200_OK)
 
-     
 
-"""
-Notification, Messaging, Video call, special chating room, payment features
-API endpoint testing all results
-"""
+# this is working fine now
+class UpdateUserPasswordAPIView(APIView):
+    def post(self, request, pk, *args, **kwargs):
+        print(request.data)
+        user = UserProfile.objects.get(pk=pk).user
+        serializer = UpdateUserPasswordSerializer(data=request.data, context={'user': user})
+        if serializer.is_valid(raise_exception=True):
+            print("hello")
+            return Response({"message": "new password is set"})
+
+        return Response({"error": "There was error setting new password"})
+
 

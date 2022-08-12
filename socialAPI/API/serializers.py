@@ -1,4 +1,3 @@
-from dataclasses import field
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
@@ -162,3 +161,26 @@ class SetNewPasswordSerializer(serializers.Serializer):
     
         return super().validate(validated_data) 
 
+
+class UpdateUserPasswordSerializer(serializers.Serializer):
+    print("hello world")
+    old_password = serializers.CharField(min_length=8, style={'input-type': 'password'}, write_only=True)
+    new_password = serializers.CharField(min_length=8, style={'input-type': 'password'}, write_only=True)
+    confirm_password = serializers.CharField(min_length=8, style={'input-type': 'password'}, write_only=True)
+
+    class Meta:
+        fields = ['old_password', 'new_password', 'confirm_password']
+
+    def validate(self, validated_data):
+        old_password = validated_data['old_password']
+        new_password = validated_data['new_password']
+        confirm_password = validated_data['confirm_password']
+        current_user = self.context['user']
+
+        if (current_user.check_password(old_password) and new_password == confirm_password):
+            current_user.set_password(new_password)
+            current_user.save()
+        else:
+            raise serializers.ValidationError("Invalid credentials")
+        
+        return validated_data

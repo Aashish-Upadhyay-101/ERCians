@@ -17,9 +17,9 @@ const UpdateProfile = () => {
   });
 
   const [userPasswordInfo, setUserPasswordInfo] = useState({
-    oldPassword: "",
-    newPassword: "",
-    re_newPassword: "",
+    old_password: "",
+    new_password: "",
+    confirm_password: "",
   });
 
   const [userProfilePicture, setUserProfilePicture] = useState(null);
@@ -51,15 +51,34 @@ const UpdateProfile = () => {
     }
   };
 
-  const handleUserPasswordChange = (e) => {
+  const handleUserPasswordChange = async (e) => {
     e.preventDefault();
-    const data = {
-      oldPassword: userPasswordInfo.oldPassword,
-      newPassword: userPasswordInfo.newPassword,
-      re_newPassword: userPasswordInfo.re_newPassword,
+    const formdata = {
+      old_password: userPasswordInfo.old_password,
+      new_password: userPasswordInfo.new_password,
+      confirm_password: userPasswordInfo.confirm_password,
     };
+    // let formdata = {};
+    // formdata["old_password"] = userPasswordInfo.old_password;
+    // formdata["new_password"] = userPasswordInfo.new_password;
+    // formdata["confirm_password"] = userPasswordInfo.confirm_password;
 
-    console.log(data);
+    console.log(formdata);
+    try {
+      const response = await axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/profile/${user.id}/update/password/`,
+        data: formdata,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${getCookie("auth_token")}`,
+        },
+      });
+      const data = await response.data;
+      console.log(data);
+    } catch (err) {
+      console.log(err.response.data);
+    }
   };
 
   // sending the image to the backend api for profile picture update
@@ -157,11 +176,11 @@ const UpdateProfile = () => {
               onChange={(e) =>
                 setUserPasswordInfo({
                   ...userPasswordInfo,
-                  oldPassword: e.target.value,
+                  old_password: e.target.value,
                 })
               }
               placeholder="old password"
-              value={userPasswordInfo.oldPassword}
+              value={userPasswordInfo.old_password}
             />
           </div>
           <div className="form-gorup">
@@ -173,11 +192,11 @@ const UpdateProfile = () => {
               onChange={(e) =>
                 setUserPasswordInfo({
                   ...userPasswordInfo,
-                  newPassword: e.target.value,
+                  new_password: e.target.value,
                 })
               }
               placeholder="new password"
-              value={userPasswordInfo.newPassword}
+              value={userPasswordInfo.new_password}
             />
           </div>
           <div className="form-gorup">
@@ -189,11 +208,11 @@ const UpdateProfile = () => {
               onChange={(e) =>
                 setUserPasswordInfo({
                   ...userPasswordInfo,
-                  re_newPassword: e.target.value,
+                  confirm_password: e.target.value,
                 })
               }
               placeholder="re-new password"
-              value={userPasswordInfo.re_newPassword}
+              value={userPasswordInfo.confirm_password}
             />
           </div>
           <button type="submit" className="mt btn btn-primary">

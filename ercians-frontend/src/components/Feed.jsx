@@ -91,9 +91,9 @@ const Feed = () => {
       {posts.map((post, index) => (
         <Post
           key={index}
-          id={post.auther.id}
+          id={post.id}
           auther={post.auther.username}
-          // auther_id={+post.auther.id}
+          auther_id={post.auther.id}
           auther_profile_picture={post.auther.profile_picture}
           description={post.description}
           image={post.image}

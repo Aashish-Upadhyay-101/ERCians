@@ -89,7 +89,6 @@ const Login = () => {
 
   return (
     <section className="section-login">
-      {/* {error && <Error message={error} />} */}
       <h1></h1>
       <div className="login">
         <Link to="/">
@@ -98,7 +97,6 @@ const Login = () => {
         <h2 className="login__header">Login</h2>
         <form onSubmit={handleLogin}>
           <div className="login__form__div">
-            {/* <label>Email</label> */}
             <label for="email">Email</label>
             <input
               id="email"

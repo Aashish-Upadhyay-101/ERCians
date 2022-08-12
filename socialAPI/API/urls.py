@@ -13,6 +13,7 @@ urlpatterns = [
     path('profiles/', views.UserProfileListAPIView.as_view(), name='profiles'),
     path('profile/<int:pk>/', views.UserProfileRetrieveAPIView.as_view(), name='profile-retrieve'),
     path('profile/<int:pk>/update/', views.UserProfileUpdateAPIView.as_view(), name='profile-update'),
+    path('profile/<int:pk>/update/password/', views.UpdateUserPasswordAPIView.as_view(), name='password-update'),
     path('profile/<int:pk>/follow/', views.AddFollowerAPIView.as_view(), name="follow"),
     path('profile/<int:pk>/unfollow/', views.RemoveFollowerAPIView.as_view(), name="unfollow"),
     path('profile/getme/', views.GetOwnProfileAPIView.as_view(), name='my-profile'),

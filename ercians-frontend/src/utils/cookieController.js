@@ -7,7 +7,7 @@ const getCookie = (cookieName) => {
 };
 
 const setCookie = (cookieName, value) => {
-  cookies.set(cookieName, value, { path: "/" });
+  cookies.set(cookieName, value);
 };
 
 const removeCookie = (cookieName) => {
