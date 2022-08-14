@@ -4,11 +4,15 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import "../styles/UpdateProfile.css";
 import { getCookie } from "../utils/cookieController";
+import { useDispatch } from "react-redux";
+import { fetchAllPosts } from "../store/postSlice";
 
 // connect this page with the backend api call is need to be done
 // if necessary API endpoint should also be made
 const UpdateProfile = () => {
   const user = useSelector((state) => state.user.loggedInUser.data);
+  const token = useSelector((state) => state.user.token);
+  const dispatch = useDispatch();
 
   const [userProfileInfo, setUserProfileInfo] = useState({
     name: "",
@@ -26,26 +30,28 @@ const UpdateProfile = () => {
 
   const handleUpdateUserProfileInfo = async (e) => {
     e.preventDefault();
-    const data = {
-      name: userProfileInfo.name,
-      location: userProfileInfo.location,
-      bio: userProfileInfo.bio,
-    };
 
-    console.log(data);
+    let profile_data = new FormData();
+    profile_data.append("name", userProfileInfo.name);
+    profile_data.append("location", userProfileInfo.location);
+    profile_data.append("bio", userProfileInfo.bio);
+    profile_data.append("profile_picture", userProfilePicture);
+
+    console.log(profile_data);
 
     try {
       const response = await axios({
-        method: "patch",
+        method: "POST",
         url: `http://127.0.0.1:8000/api/profile/${user.id}/update/`,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${getCookie("auth_cookie")}`,
+          Authorization: `Token ${token}`,
         },
-        data,
+        data: profile_data,
       });
-      const data = await response.data;
-      console.log(data);
+      const newData = await response.data;
+      console.log(newData);
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }
@@ -58,10 +64,6 @@ const UpdateProfile = () => {
       new_password: userPasswordInfo.new_password,
       confirm_password: userPasswordInfo.confirm_password,
     };
-    // let formdata = {};
-    // formdata["old_password"] = userPasswordInfo.old_password;
-    // formdata["new_password"] = userPasswordInfo.new_password;
-    // formdata["confirm_password"] = userPasswordInfo.confirm_password;
 
     console.log(formdata);
     try {
@@ -108,7 +110,10 @@ const UpdateProfile = () => {
       </div>
 
       <div className="profile-info__update">
-        <form onSubmit={handleUpdateUserProfileInfo}>
+        <form
+          onSubmit={handleUpdateUserProfileInfo}
+          enctype="multipart/form-data"
+        >
           <div className="form-group">
             <label htmlFor="name">Name</label>
             <input
@@ -116,13 +121,14 @@ const UpdateProfile = () => {
               id="name"
               className="input-field"
               placeholder={user.name}
-              defaultValue={user.name}
-              onChange={(e) =>
+              value={userProfileInfo.name}
+              onChange={(e) => {
                 setUserProfileInfo({
                   ...userProfileInfo,
                   name: e.target.value,
-                })
-              }
+                });
+              }}
+              required
             />
           </div>
           <div className="form-group">
@@ -134,13 +140,14 @@ const UpdateProfile = () => {
               placeholder={
                 user.location ? user.location : "Enter your location"
               }
-              defaultValue={user.location}
-              onChange={(e) =>
+              value={userProfileInfo.location}
+              onChange={(e) => {
                 setUserProfileInfo({
                   ...userProfileInfo,
                   location: e.target.value,
-                })
-              }
+                });
+              }}
+              required
             />
           </div>
           <div className="form-group">
@@ -148,13 +155,14 @@ const UpdateProfile = () => {
             <textarea
               id="bio"
               placeholder={user.bio ? user.bio : "Enter your bio..."}
-              defaultValue={user.bio}
-              onChange={(e) =>
+              value={userProfileInfo.bio}
+              onChange={(e) => {
                 setUserProfileInfo({
                   ...userProfileInfo,
                   bio: e.target.value,
-                })
-              }
+                });
+              }}
+              required
             ></textarea>
           </div>
           <div className="form-group">

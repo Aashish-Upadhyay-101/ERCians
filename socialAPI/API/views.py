@@ -12,7 +12,9 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from .serializers import (LoginUserSerializer, RegisterUserSerializer, PostSerializer, UserProfileSerializer, CommentSerializer, SetNewPasswordSerializer, UpdateUserPasswordSerializer)
+from .serializers import (LoginUserSerializer, RegisterUserSerializer, PostSerializer,
+                         UserProfileSerializer, CommentSerializer, SetNewPasswordSerializer,
+                          UpdateUserPasswordSerializer, UpdateUserInfoSerializer)
 from .models import Post, UserProfile, Comment
 from .permissions import IsPostOwner, IsCommentOwner
 
@@ -120,7 +122,6 @@ class UserProfileListAPIView(generics.ListAPIView):
 
 
 class UserProfileRetrieveAPIView(generics.RetrieveUpdateAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = UserProfile.objects.all()
     lookup_field = 'pk'
@@ -128,13 +129,31 @@ class UserProfileRetrieveAPIView(generics.RetrieveUpdateAPIView):
 
 
 class UserProfileUpdateAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def patch(self, request, pk, *args, **kwargs):
+    def post(self, request, pk, *args, **kwargs):
         user_profile = UserProfile.objects.get(pk=pk)
-        print(user_profile.email)
-        return
+        user = user_profile.user
+
+        context = {'user': user, 'user_profile': user_profile}
+        serializer = UpdateUserInfoSerializer(data=request.data, context=context)
+        if serializer.is_valid(raise_exception=True):
+            print("haha")
+        
+#         return Response("hahahahahah")
+# class UserProfileUpdateAPIView(generics.UpdateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = UpdateUserInfoSerializer
+
+
+# class UserProfileUpdateAPIView(APIView):
+#     authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+#     def patch(self, request, pk, *args, **kwargs):
+#         user_profile = UserProfile.objects.get(pk=pk)
+#         print(user_profile.email)
+#         return
 
 
 class GetOwnProfileAPIView(APIView):

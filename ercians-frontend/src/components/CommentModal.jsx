@@ -16,10 +16,8 @@ const timeAgo = new TimeAgo("en-US");
 // cookies instance
 const cookies = new Cookies();
 
-// login using email and password (the username and password login is by default so now we want to replace that)
-// username already taken error
+// changing / updating user's profile picture
 
-// profile visit and profile picture update update
 // follow and unfollow user
 // displaying only the relivent post (i.e. only the post of the user that he/she has followed)
 

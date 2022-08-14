@@ -1,3 +1,4 @@
+from pydoc import locate
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
@@ -184,3 +185,39 @@ class UpdateUserPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid credentials")
         
         return validated_data
+
+
+# serailizer to update user's info
+class UpdateUserInfoSerializer(serializers.Serializer):
+    name = serializers.CharField(write_only=True)
+    location = serializers.CharField(write_only=True)
+    bio = serializers.CharField(write_only=True)
+    profile_picture = serializers.ImageField(write_only=True)
+
+    class Meta:
+        fields = ['name', 'location', 'bio', 'profile_picture']
+        
+
+    def validate(self, validated_data):
+        name = validated_data['name']
+        location = validated_data['location']
+        bio = validated_data['bio']
+        profile_picture = validated_data['profile_picture']
+
+        user = self.context['user']
+        user_profile = self.context['user_profile']
+
+        user.username = name
+        user_profile.name = name 
+        user_profile.location = location
+        user_profile.bio = bio
+        user_profile.profile_picture = profile_picture 
+
+        user.save()
+        user_profile.save()
+
+        return validated_data
+    
+
+
+        
