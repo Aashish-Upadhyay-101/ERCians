@@ -78,9 +78,17 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Post.objects.all().order_by('-created_on')
     
-    
     def perform_create(self, serializer):
         serializer.save(auther=self.request.user)
+
+# display only the post of the user that he/she have followed
+# class DisplayOnlyReleventPostAPIView(generics.ListAPIView):
+#     serializer_class = PostSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     # advance query to only fetch relevent posts
+#     def get_queryset(self):
+#         pass 
 
 
 class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -117,7 +125,7 @@ class AddLikeAPIView(APIView):
 
 class UserProfileListAPIView(generics.ListAPIView):
     queryset = UserProfile.objects.all()
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = UserProfileSerializer
 
 
@@ -140,7 +148,7 @@ class UserProfileUpdateAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             print("haha")
         
-#         return Response("hahahahahah")
+        return Response("hahahahahah")
 # class UserProfileUpdateAPIView(generics.UpdateAPIView):
 #     permission_classes = [IsAuthenticated]
 #     serializer_class = UpdateUserInfoSerializer
@@ -167,7 +175,7 @@ class GetOwnProfileAPIView(APIView):
 
     
 class AddFollowerAPIView(APIView):
-    def get(self, request, pk, *args, **kwargs):
+    def post(self, request, pk, *args, **kwargs):
         try:
             user_profile = UserProfile.objects.get(pk=pk)
             if user_profile.user == request.user:
@@ -186,7 +194,7 @@ class AddFollowerAPIView(APIView):
 
 
 class RemoveFollowerAPIView(APIView):
-    def get (self, request, pk, *args, **kwargs):
+    def post (self, request, pk, *args, **kwargs):
         try:
             user_profile = UserProfile.objects.get(pk=pk)
             if user_profile.user == request.user:

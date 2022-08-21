@@ -4,18 +4,60 @@ import Cookies from "universal-cookie";
 import axios from "axios";
 import "../styles/Profile.css";
 import { getCookie } from "../utils/cookieController";
+import { useSelector } from "react-redux";
 
+// follow and unfollow user system glitched fixing work
 const Profile = () => {
-  const { id, username } = useParams();
+  const { id } = useParams();
   const token = getCookie("auth_token");
+  const user = useSelector((state) => state.user.loggedInUser.data);
 
   // hooks
   // fetch user profile and display user's credentials here
+
+  // update backend code, addlikeAPIView same for add and remove followers from user\s's team"
+
   const [userProfile, setUserProfile] = useState({});
+  const [follow, setFollow] = useState(false);
+  const [unfollow, setUnFollow] = useState(false);
+  const [isUserFollowed, setIsUserFollowed] = useState(false);
   const [friends, setFriends] = useState({ followers: [], followings: [] });
 
+  const handleFollow = async () => {
+    try {
+      // api backend call
+      const response = await axios({
+        url: `http://127.0.0.1:8000/api/profile/${id}/follow/`,
+        method: "POST",
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      setFollow(true);
+      setUnFollow(false);
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };
+
+  const handleUnFollow = async () => {
+    try {
+      // api backend call
+      const response = await axios({
+        url: `http://127.0.0.1:8000/api/profile/${id}/unfollow/`,
+        method: "POST",
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      setUnFollow(true);
+      setFollow(false);
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };
+
   useEffect(() => {
-    console.log(id, username);
     async function fetchUserProfile() {
       const response = await axios({
         method: "get",
@@ -27,9 +69,18 @@ const Profile = () => {
       const data = await response.data;
       setUserProfile(data);
       setFriends({ followers: data.followers, followings: data.followings });
+
+      // new // trying to show unfollow button if user has already follow that user
+      for (let follower of friends.followers) {
+        if (follower.id == user.id) {
+          setIsUserFollowed(true);
+          console.log(follower.id == user.id);
+          console.log("hello");
+        }
+      }
     }
     fetchUserProfile();
-  }, []);
+  }, [id, follow, unfollow, isUserFollowed]);
 
   return (
     <div className="profile-section">
@@ -55,12 +106,28 @@ const Profile = () => {
           <p className="profile__right__user__bio">{userProfile.bio}</p>
         </div>
       </div>
-      <div className="profile__footer">
-        <button className="btn-small btn-primary-outline">Follow</button>
-        <Link to="/message">
-          <button className="btn-small btn-primary">message</button>
-        </Link>
-      </div>
+      {id != user.id && (
+        <div className="profile__footer">
+          {isUserFollowed ? (
+            <button
+              className="btn-small btn-primary-outline"
+              onClick={handleUnFollow}
+            >
+              Unfollow
+            </button>
+          ) : (
+            <button
+              className="btn-small btn-primary-outline"
+              onClick={handleFollow}
+            >
+              Follow
+            </button>
+          )}
+          {/* <Link to="/message">
+            <button className="btn-small btn-primary">message</button>
+          </Link> */}
+        </div>
+      )}
 
       <h2 className="profile__pins">
         <ion-icon name="pin-outline"></ion-icon> Pins

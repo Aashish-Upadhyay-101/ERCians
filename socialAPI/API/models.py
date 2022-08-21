@@ -26,6 +26,7 @@ class UserProfile(models.Model):
         followers_list = []
         for follower in followers:
             followers_dict = {}
+            followers_dict['id'] = follower.profile.id
             followers_dict['name'] = follower.username
             followers_dict['profile_picture'] = follower.profile.profile_picture.url
             followers_list.append(followers_dict)
@@ -37,6 +38,7 @@ class UserProfile(models.Model):
         followings_list = []
         for following in followings:
             followings_dict = {}
+            followings_dict['id'] = following.profile.id
             followings_dict['name'] = following.username
             followings_dict['profile_picture'] = following.profile.profile_picture.url 
             followings_list.append(followings_dict)

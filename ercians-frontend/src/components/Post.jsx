@@ -75,7 +75,7 @@ const Post = ({
     <div className="post">
       <div className="post__header">
         <div className="post__header__left">
-          <Link to={`profile/${id}/${auther}`}>
+          <Link to={`profile/${auther_id}/${auther}`}>
             <img
               className="post__profile__picture"
               src={`http://127.0.0.1:8000` + auther_profile_picture}
