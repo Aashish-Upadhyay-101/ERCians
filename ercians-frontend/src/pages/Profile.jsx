@@ -35,6 +35,7 @@ const Profile = () => {
       });
       setFollow(true);
       setUnFollow(false);
+      setIsUserFollowed(!isUserFollowed);
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -52,35 +53,35 @@ const Profile = () => {
       });
       setUnFollow(true);
       setFollow(false);
+      setIsUserFollowed(!isUserFollowed);
     } catch (err) {
       console.log(err.response.data.message);
     }
   };
 
-  useEffect(() => {
-    async function fetchUserProfile() {
-      const response = await axios({
-        method: "get",
-        url: `http://127.0.0.1:8000/api/profile/${id}/`,
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      });
-      const data = await response.data;
-      setUserProfile(data);
-      setFriends({ followers: data.followers, followings: data.followings });
+  async function fetchUser() {
+    const response = await axios({
+      method: "get",
+      url: `http://127.0.0.1:8000/api/profile/${id}/`,
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    const data = await response.data;
+    setUserProfile(data);
+    setFriends({ followers: data.followers, followings: data.followings });
 
-      // new // trying to show unfollow button if user has already follow that user
-      for (let follower of friends.followers) {
-        if (follower.id == user.id) {
-          setIsUserFollowed(true);
-          console.log(follower.id == user.id);
-          console.log("hello");
-        }
+    // this works yesss (default unfollow/follow state on page load)
+    for (let follower in data.followers) {
+      if (follower.id == user.id) {
+        setIsUserFollowed(true);
       }
     }
-    fetchUserProfile();
-  }, [id, follow, unfollow, isUserFollowed]);
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, [follow, unfollow, isUserFollowed]);
 
   return (
     <div className="profile-section">
