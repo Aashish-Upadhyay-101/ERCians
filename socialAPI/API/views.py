@@ -69,6 +69,21 @@ class LogoutAPIView(APIView):
 
 
 
+class SearchUserAPIView(generics.ListAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = UserProfile.objects.all()
+
+
+class RelatedPostOnlyAPIView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user 
+        qs = Post.objects.filter(auther__profile__followers__in=[user.id]).order_by('-created_on')
+        return qs 
+
 class PostListCreateAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all().order_by('-created_on') 
     serializer_class = PostSerializer

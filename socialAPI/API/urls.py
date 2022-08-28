@@ -9,6 +9,7 @@ urlpatterns = [
     path('auth/login/default-login/<str:token>/', views.DefaultLoginAPIView.as_view(), name="default-login"),
     path('auth/logout/', views.LogoutAPIView.as_view(), name="logout"),
     path('posts/', views.PostListCreateAPIView.as_view(), name="post-list-create"),
+    path('related-posts/', views.RelatedPostOnlyAPIView.as_view(), name='related-post-only'),
     path('posts/<int:pk>/', views.PostRetrieveUpdateDestroyAPIView.as_view(), name="post-retrieve-update-delete"),
     path('profiles/', views.UserProfileListAPIView.as_view(), name='profiles'),
     path('profile/<int:pk>/update/', views.UserProfileUpdateAPIView.as_view(), name='profile-update'),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('forgot-password/', views.PasswordResetEmailAPIView.as_view(), name="forget-password"),
     path('auth/reset-password/<str:uid>/<str:token>/', views.ResetPasswordTokenValidatorAPIView.as_view(), name="reset-token-validator"),
     path('reset-password/set-new-password/', views.SetNewPasswordAPIView.as_view(), name="set-new-password"),
+    path('search-user/', views.SearchUserAPIView.as_view(), name="search-user"),
 ]
 
