@@ -16,20 +16,6 @@ const timeAgo = new TimeAgo("en-US");
 // cookies instance
 const cookies = new Cookies();
 
-// changing / updating user's profile picture
-
-// follow and unfollow user
-// displaying only the relivent post (i.e. only the post of the user that he/she has followed)
-
-// if possible also try to add test case for automated testing
-
-// notifications -> lets consider this one
-// messaging system
-
-// -> notification / messaging / video calling messanger app  names ERCiansTalk
-
-// react toastify for error handle pop ups
-
 /*
   this is where the actual comment is displayed
   this component takes the props from </CommentModal> component

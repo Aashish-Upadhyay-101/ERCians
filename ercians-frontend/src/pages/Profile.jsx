@@ -7,6 +7,8 @@ import { getCookie } from "../utils/cookieController";
 import { useSelector } from "react-redux";
 
 // follow and unfollow user system glitched fixing work
+// only works after first page reload
+
 const Profile = () => {
   const { id } = useParams();
   const token = getCookie("auth_token");
@@ -72,16 +74,25 @@ const Profile = () => {
     setFriends({ followers: data.followers, followings: data.followings });
 
     // this works yesss (default unfollow/follow state on page load)
-    for (let follower in data.followers) {
+    for (const follower in data.followers) {
       if (follower.id == user.id) {
         setIsUserFollowed(true);
+
+        console.log("i ran bro");
       }
     }
+
+    data.followers.forEach((follower) => {
+      if (follower.id == user.id) {
+        console.log("done");
+        setIsUserFollowed(true);
+      }
+    });
   }
 
   useEffect(() => {
     fetchUser();
-  }, [follow, unfollow, isUserFollowed]);
+  }, [id, follow, unfollow, isUserFollowed]);
 
   return (
     <div className="profile-section">
@@ -102,7 +113,6 @@ const Profile = () => {
             <p>
               <strong>{friends.followings.length}</strong> following
             </p>
-            <span className="badge">friends &#10004;</span>
           </div>
           <p className="profile__right__user__bio">{userProfile.bio}</p>
         </div>
