@@ -150,8 +150,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'aashish.upadhyay98651@gmail.com'
-EMAIL_HOST_PASSWORD = 'aswbthxrrljxadly'
+EMAIL_HOST_USER = 'email here'
+EMAIL_HOST_PASSWORD = 'password here ...'
 
 
 CSRF_TRUSTED_ORIGINS = ['chrome-extension://aicmkgpgakddgnaphhhpliifpcfhicfo']
